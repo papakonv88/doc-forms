@@ -1,0 +1,90 @@
+{
+  "technician": {
+    "patient": [
+      {
+        "propertyName": "name",
+        "alternateName": "",
+        "title": "onoma asthenous",
+        "label": "onoma asthenous",
+        "type": "free",
+        "errorMsg": "wrong value",
+        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
+      },
+      {
+        "propertyName": "patronimo",
+        "alternateName": "",
+        "title": "patronimo",
+        "label": "patronimo",
+        "type": "free",
+        "errorMsg": "wrong value",
+        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
+      },
+      {
+        "propertyName": "amka",
+        "alternateName": "",
+        "title": "amka",
+        "label": "amka",
+        "type": "free",
+        "errorMsg": "wrong value",
+        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
+      }
+    ],
+    "exam": [
+      {
+        "propertyName": "",
+        "alternateName": "",
+        "title": "arithmos eksetasis",
+        "label": "",
+        "type": "free",
+        "errorMsg": "rfrrfrg",
+        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
+      },
+      {
+        "propertyName": "test",
+        "alternateName": "",
+        "title": "tipos katagrafis",
+        "label": "testttttty",
+        "type": "dropdown",
+        "errorMsg": "error message",
+        "validator": "",
+        "values":["one", "two", "three"]
+      },
+      {
+        "propertyName": "methodoi_energopoiisis",
+        "alternateName": "",
+        "title": "ΜΕΘΟΔΟΙ ΕΝΕΡΓΟΠΟΙΗΣΗΣ",
+        "label": "testttttty",
+        "type": "dropdownWithRadio",
+        "errorMsg": "error message",
+        "validator": "",
+        "values":["one", "two"],
+        "radios": {
+          "one": ["1", "2", "3"],
+          "two": ["4", "5", "6"],
+          "errorMsg": {}
+        }
+      },
+      {
+        "propertyName": "xronos_eksetasis",
+        "alternateName": "",
+        "title": "Χρόνος Εξέτασης",
+        "label": "Επιλέξτε διάρκεια",
+        "type": "toggleButtonInput",
+        "errorMsg": "error message",
+        "validator": "",
+        "values":["days", "hours", "minutes"],
+        "radios": {
+          "hours": ["1", "2", "3"],
+          "minutes": ["4", "5", "6"],
+          "days": [],
+          "errorMsg": {
+            "days": "Εισάγετε εναν ακέραιο αριθμό μεγαλύτερο του 0"
+          },
+          "validators": {
+            "days": "^[1-9]\\d*$"
+          }
+        }
+      }
+    ]
+  }
+}
