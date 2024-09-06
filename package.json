@@ -10,6 +10,8 @@
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.16.1",
     "@mui/material": "^5.16.1",
+    "@mui/x-date-pickers": "^7.16.0",
+    "dayjs": "^1.11.13",
     "mongodb": "^6.5.0",
     "next": "latest",
     "react": "^18.2.0",

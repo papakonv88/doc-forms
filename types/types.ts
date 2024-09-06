@@ -17,6 +17,7 @@ export interface FormValuesPatient {
     name: string;
     patronimo: string;
     amka: string;
+    imerominia_katagrafis: Date;
     test: string;
     methodoi_energopoiisis: {
         radio: string;

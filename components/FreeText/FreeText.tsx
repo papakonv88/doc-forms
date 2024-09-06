@@ -47,7 +47,7 @@ function FreeText({hasNested, property, handleChange, value, label, errorMsg, va
                         <InputAdornment position="end" sx={{position: 'absolute', right: -60}}>
                             {(!error && touched) &&
                                 <CheckCircleOutlined fontSize={'large'} sx={{color: 'success.light'}}/>}
-                            {(error && touched) && <ErrorOutlined fontSize={'large'} sx={{color: 'error.light'}}/>}
+                            {(error) && <ErrorOutlined fontSize={'large'} sx={{color: 'error.light'}}/>}
                         </InputAdornment>
                     ),
                 }}

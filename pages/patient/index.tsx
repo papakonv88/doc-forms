@@ -4,7 +4,7 @@ import SectionContainer from "../../components/SectionContainer/SectionContainer
 import AddPatient from "../../components/AddPatient/AddPatient";
 import Separator from "../../components/Separator/Separator";
 import AddExam from "../../components/AddExam/AddExam";
-import {FormValuesPatient, InputProps} from "../../types/types";
+import {InputProps} from "../../types/types";
 import {Box, Button} from "@mui/material";
 
 type ValueType = InputProps['value'];
@@ -15,6 +15,7 @@ function Patient() {
         name: '',
         patronimo: '',
         amka: '',
+        imerominia_katagrafis: '',
         test: '',
         methodoi_energopoiisis: {
             radio: '',
@@ -30,6 +31,7 @@ function Patient() {
         name: false,
         patronimo: false,
         amka: false,
+        imerominia_katagrafis: false,
         test: false,
         methodoi_energopoiisis: false,
         xronos_eksetasis: false
@@ -65,6 +67,10 @@ function Patient() {
             if (!value && typeof value !== 'object') {
                 newObj[key] = true
             } else if (typeof value === 'object' && value !== null) {
+                if (value instanceof Date) {
+                    newObj[key] = true
+                    return;
+                }
                 if (!value?.string) {
                     newObj[key] = true
                 }
@@ -77,7 +83,7 @@ function Patient() {
     }
 
     return (
-        <Box display={'flex'} flexDirection={'column'} maxWidth={'xl'} sx={{margin: 'auto'}} px={10} justifyContent={'center'}>
+        <Box display={'flex'} flexDirection={'column'} maxWidth={'md'} sx={{margin: 'auto'}} px={10} justifyContent={'center'}>
             <SectionContainer>
                 <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
                             errors={errors} handleError={handleError}/>
