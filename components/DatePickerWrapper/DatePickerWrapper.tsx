@@ -36,7 +36,8 @@ function DatePickerWrapper({property, handleChange, value, label, errorMsg, erro
                     value={value ? dayjs(value) : null}
                     onChange={(newValue) => handleDateChange(newValue)}
                     slotProps={{
-                        field: { clearable: true, onClear: () => setCleared(true) },
+                        field: { clearable: true, onClear: () => setCleared(true)},
+                        inputAdornment: {sx: {paddingRight: 2}}
                     }}
                 />
             </LocalizationProvider>

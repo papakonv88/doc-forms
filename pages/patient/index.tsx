@@ -30,7 +30,7 @@ function Patient() {
 
     const [errors, setErrors] = useState({
         name: false,
-        surname: '',
+        surname: false,
         patronimo: false,
         amka: false,
         imerominia_katagrafis: false,

@@ -3,6 +3,7 @@ import FreeText from "../FreeText/FreeText";
 import {FormValuesPatient, InputProps} from "../../types/types";
 import DropDown from "../DropDown/DropDown";
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import InputType from "../../enums/InputTypes";
 
 type ValueType = InputProps['value'];
 
@@ -28,7 +29,7 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
             </Box>
             <Stack rowGap={5} mt={5} direction={'column'} sx={{width: '100%'}}>
                 {patient.map((element: any, idx: number) => {
-                    if (element.type === 'free') {
+                    if (element.type === InputType.FREE) {
                         return <FreeText key={`${element.alternateName}_${idx}`} property={element.propertyName}
                                          handleChange={handleValuesChange}
                                          value={formValues[element.propertyName as keyof FormValuesPatient]}
@@ -38,7 +39,7 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
                                          handleError={handleError}
                         />
                     }
-                    if (element.type === 'dropdown') {
+                    if (element.type === InputType.DROPDOWN) {
                         return <DropDown key={`${element.alternateName}_${idx}`} options={element.values}
                                          property={element.propertyName} handleChange={handleValuesChange}
                                          value={formValues[element.propertyName as keyof FormValuesPatient]}
