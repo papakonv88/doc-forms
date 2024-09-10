@@ -6,6 +6,7 @@ import Separator from "../../components/Separator/Separator";
 import AddExam from "../../components/AddExam/AddExam";
 import {InputProps} from "../../types/types";
 import {Box, Button} from "@mui/material";
+import axios from "axios";
 
 type ValueType = InputProps['value'];
 
@@ -63,7 +64,7 @@ function Patient() {
         });
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let newObj: any = {};
         for (const [key, value] of Object.entries(formValues)) {
             if (!value && typeof value !== 'object') {
@@ -82,10 +83,19 @@ function Patient() {
             ...errors,
             ...newObj
         })
+        try {
+            const result = await axios.post('/api/insertPatient', {
+                name: 'Bill', surname: 'Papakonstantinou', patronimo: 'Konstantinos', amka: '12345678909'
+            })
+            console.log(result, 'upload succeed');
+        } catch (e) {
+            console.log(e, 'error inserting patient');
+        }
     }
 
     return (
-        <Box display={'flex'} flexDirection={'column'} maxWidth={'md'} sx={{margin: 'auto'}} px={10} justifyContent={'center'}>
+        <Box display={'flex'} flexDirection={'column'} maxWidth={'md'} sx={{margin: 'auto'}} px={10}
+             justifyContent={'center'}>
             <SectionContainer>
                 <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
                             errors={errors} handleError={handleError}/>
