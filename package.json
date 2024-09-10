@@ -10,7 +10,9 @@
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.16.1",
     "@mui/material": "^5.16.1",
+    "axios": "^1.7.7",
     "mongodb": "^6.5.0",
+    "mongoose": "^8.6.1",
     "next": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

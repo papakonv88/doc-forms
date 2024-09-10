@@ -4,7 +4,7 @@ import SectionContainer from "../../components/SectionContainer/SectionContainer
 import AddPatient from "../../components/AddPatient/AddPatient";
 import Separator from "../../components/Separator/Separator";
 import AddExam from "../../components/AddExam/AddExam";
-import {FormValuesPatient, InputProps} from "../../types/types";
+import {InputProps} from "../../types/types";
 import {Box, Button} from "@mui/material";
 
 type ValueType = InputProps['value'];
@@ -13,6 +13,7 @@ function Patient() {
 
     const [formValues, setFormValues] = useState({
         name: '',
+        surname: '',
         patronimo: '',
         amka: '',
         test: '',
@@ -28,6 +29,7 @@ function Patient() {
 
     const [errors, setErrors] = useState({
         name: false,
+        surname: '',
         patronimo: false,
         amka: false,
         test: false,

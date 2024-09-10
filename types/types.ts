@@ -15,6 +15,7 @@ export interface InputProps {
 
 export interface FormValuesPatient {
     name: string;
+    surname: string;
     patronimo: string;
     amka: string;
     test: string;

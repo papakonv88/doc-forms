@@ -11,6 +11,15 @@
         "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
       },
       {
+        "propertyName": "surname",
+        "alternateName": "",
+        "title": "eponimo asthenous",
+        "label": "eponimo asthenous",
+        "type": "free",
+        "errorMsg": "wrong value",
+        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
+      },
+      {
         "propertyName": "patronimo",
         "alternateName": "",
         "title": "patronimo",
