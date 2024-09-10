@@ -16,6 +16,7 @@ function Patient() {
         surname: '',
         patronimo: '',
         amka: '',
+        imerominia_katagrafis: '',
         test: '',
         methodoi_energopoiisis: {
             radio: '',
@@ -32,6 +33,7 @@ function Patient() {
         surname: '',
         patronimo: false,
         amka: false,
+        imerominia_katagrafis: false,
         test: false,
         methodoi_energopoiisis: false,
         xronos_eksetasis: false
@@ -67,6 +69,10 @@ function Patient() {
             if (!value && typeof value !== 'object') {
                 newObj[key] = true
             } else if (typeof value === 'object' && value !== null) {
+                if (value instanceof Date) {
+                    newObj[key] = true
+                    return;
+                }
                 if (!value?.string) {
                     newObj[key] = true
                 }
@@ -79,7 +85,7 @@ function Patient() {
     }
 
     return (
-        <Box display={'flex'} flexDirection={'column'} maxWidth={'xl'} sx={{margin: 'auto'}} px={10} justifyContent={'center'}>
+        <Box display={'flex'} flexDirection={'column'} maxWidth={'md'} sx={{margin: 'auto'}} px={10} justifyContent={'center'}>
             <SectionContainer>
                 <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
                             errors={errors} handleError={handleError}/>

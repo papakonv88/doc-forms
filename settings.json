@@ -40,6 +40,15 @@
     ],
     "exam": [
       {
+        "propertyName": "imerominia_katagrafis",
+        "alternateName": "imerominiaKatagrafis",
+        "title": "Ημερομηνία Καταγραφής",
+        "label": "Ημερομηνία",
+        "type": "date",
+        "errorMsg": "Επιλέξτε ημερομηνία",
+        "validator": ""
+      },
+      {
         "propertyName": "",
         "alternateName": "",
         "title": "arithmos eksetasis",

@@ -50,7 +50,7 @@ function DropDown({hasNested, options, value, handleChange, property, errorMsg, 
                                                                     {(!error && touched) &&
                                                                         <CheckCircleOutlined fontSize={'large'}
                                                                                              sx={{color: 'success.light'}}/>}
-                                                                    {(error && touched) &&
+                                                                    {(error) &&
                                                                         <ErrorOutlined fontSize={'large'}
                                                                                        sx={{color: 'error.light'}}/>}
                                                                 </InputAdornment>
