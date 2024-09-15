@@ -1,12 +1,15 @@
-import {useMemo, useState} from "react";
+import {useContext, useMemo, useState} from "react";
 import Settings from './../../settings.json';
-import SectionContainer from "../../components/SectionContainer/SectionContainer";
+import SectionContainer from "../../components/Containers/SectionContainer/SectionContainer";
 import AddPatient from "../../components/AddPatient/AddPatient";
 import Separator from "../../components/Separator/Separator";
 import AddExam from "../../components/AddExam/AddExam";
 import {InputProps} from "../../types/types";
 import {Box, Button} from "@mui/material";
 import axios from "axios";
+import MessageVariants from "../../enums/MessageVariants";
+import PageContainer from "../../components/Containers/PageContainer";
+import {useAppContext} from "../../context";
 
 type ValueType = InputProps['value'];
 
@@ -40,13 +43,14 @@ function Patient() {
         xronos_eksetasis: false
     });
 
+    const { handleOpenSnackbar, handleLoader } = useAppContext();
+
     const handleError = (value: boolean, propertyName: string) => {
         setErrors({
             ...errors,
             [propertyName]: value
         });
     }
-
 
     const patient = useMemo(() => {
         return Settings.technician.patient
@@ -83,32 +87,46 @@ function Patient() {
             ...errors,
             ...newObj
         })
+
         try {
-            const result = await axios.post('/api/insertPatient', {
-                name: 'Bill', surname: 'Papakonstantinou', patronimo: 'Konstantinos', amka: '12345678909'
-            })
-            console.log(result, 'upload succeed');
+            handleLoader(true);
+            const exists = await axios.get(`/api/insertPatient?amka=${formValues.amka}`);
+            if (exists.data?.isAmka) {
+                handleLoader(false)
+                handleOpenSnackbar('Hello World', MessageVariants.ERROR)
+            } else {
+                const result = await axios.post('/api/insertPatient', {
+                    name: 'Bill', surname: 'Papakonstantinou', patronimo: 'Konstantinos', amka: '12345648911'
+                })
+                console.log('new row', result)
+            }
+            handleLoader(false)
         } catch (e) {
-            console.log(e, 'error inserting patient');
+            handleLoader(false)
+            handleOpenSnackbar('Hello World', MessageVariants.ERROR)
         }
+
     }
 
     return (
-        <Box display={'flex'} flexDirection={'column'} maxWidth={'md'} sx={{margin: 'auto'}} px={10}
-             justifyContent={'center'}>
-            <SectionContainer>
-                <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
-                            errors={errors} handleError={handleError}/>
-            </SectionContainer>
-            <Separator/>
-            <SectionContainer>
-                <AddExam exam={exam} handleValuesChange={handleValuesChange} formValues={formValues} errors={errors}
-                         handleError={handleError}/>
-            </SectionContainer>
-            <Box display={'flex'} justifyContent={'end'} pb={10}>
-                <Button onClick={handleSubmit} sx={{width: '350px'}} variant="contained" size={'large'}>Υποβολη</Button>
-            </Box>
-        </Box>
+        <>
+            <PageContainer>
+                <SectionContainer>
+                    <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
+                                errors={errors} handleError={handleError}/>
+                </SectionContainer>
+                <Separator/>
+                <SectionContainer>
+                    <AddExam exam={exam} handleValuesChange={handleValuesChange} formValues={formValues} errors={errors}
+                             handleError={handleError}/>
+                </SectionContainer>
+                <Box display={'flex'} justifyContent={'end'} pb={10}>
+                    <Button onClick={handleSubmit} sx={{width: '350px'}} variant="contained"
+                            size={'large'}>Υποβολη</Button>
+                </Box>
+            </PageContainer>
+
+        </>
     )
 }
 

@@ -2,16 +2,19 @@ import {NextApiRequest, NextApiResponse} from 'next';
 import NewPatient from './../../models/patient';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'POST') {
-        try {
+    switch (req.method) {
+        case 'GET':
+            const {amka} = req.query;
+            const isAmka = await NewPatient.exists({ amka });
+            res.status(200).json({isAmka});
+            break;
+        case 'POST':
             const newPatient = new NewPatient(req.body);
             const result = await newPatient.save()
-            return res.status(201).json({message: 'Patient added successfully', result});
-        } catch (e) {
-            console.error(e);
-            return res.status(400).json(e);
-        }
-    } else {
-        res.status(405).json({ success: false, error: "Method not allowed" });
+            res.status(201).json({message: 'Patient added successfully', result});
+            break;
+        default:
+            res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
+            res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }

@@ -18,9 +18,6 @@ function FreeText({hasNested, property, handleChange, value, label, errorMsg, va
         const newValue = e?.target?.value as any;
         handleChange(newValue, property)
 
-        console.log(valueValidator, 'validator')
-
-
         if (validator && valueValidator) {
             if (!valueValidator.test(newValue)) {
                 handleError(true, property)
