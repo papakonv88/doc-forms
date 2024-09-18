@@ -4,6 +4,8 @@ import {FormValuesPatient, InputProps} from "../../types/types";
 import DropDown from "../DropDown/DropDown";
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import InputType from "../../enums/InputTypes";
+import SearchPatient from "../SearchPatient/SearchPatient";
+import * as React from "react";
 
 type ValueType = InputProps['value'];
 
@@ -14,15 +16,19 @@ interface AddPatientInterface {
     formValues: any; // TODO: Specify exact props
     errors: any;
     handleError: (value: boolean, propertyName: string) => void;
+    openDialog: boolean;
+    handleDialog: (value: boolean) => void;
 }
 
-function AddPatient({patient, handleValuesChange, formValues, errors, handleError}: AddPatientInterface) {
+function AddPatient({patient, handleValuesChange, formValues, errors, handleError, openDialog, handleDialog}: AddPatientInterface) {
     return (
+        <>
+        <SearchPatient openDialog={openDialog} handleDialog={handleDialog} />
         <Box width={'100%'}>
             <Box display={'flex'} flexDirection={'row'} columnGap={5} alignItems={'center'}>
                 <Typography variant={'h5'}>Εισαγωγή Ασθενούς</Typography>
                 <Tooltip title={'Ανάκτηση στοιχείων ασθενούς'} placement={'right'} >
-                    <IconButton aria-label="patch" color="primary" onClick={() => alert('Icon Button Clicked')}>
+                    <IconButton aria-label="patch" color="primary" onClick={() => handleDialog(true)}>
                         <CloudDownloadIcon fontSize={'large'}/>
                     </IconButton>
                 </Tooltip>
@@ -50,6 +56,7 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
                 })}
             </Stack>
         </Box>
+        </>
     )
 }
 

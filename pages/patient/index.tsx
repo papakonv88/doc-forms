@@ -1,4 +1,4 @@
-import {useContext, useMemo, useState} from "react";
+import {useMemo, useState} from "react";
 import Settings from './../../settings.json';
 import SectionContainer from "../../components/Containers/SectionContainer/SectionContainer";
 import AddPatient from "../../components/AddPatient/AddPatient";
@@ -42,6 +42,12 @@ function Patient() {
         methodoi_energopoiisis: false,
         xronos_eksetasis: false
     });
+
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleDialog = (bool: boolean) => {
+        setOpenDialog(bool);
+    };
 
     const { handleOpenSnackbar, handleLoader } = useAppContext();
 
@@ -113,7 +119,7 @@ function Patient() {
             <PageContainer>
                 <SectionContainer>
                     <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
-                                errors={errors} handleError={handleError}/>
+                                errors={errors} handleError={handleError} openDialog={openDialog} handleDialog={handleDialog}/>
                 </SectionContainer>
                 <Separator/>
                 <SectionContainer>
