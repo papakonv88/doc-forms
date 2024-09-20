@@ -13,7 +13,7 @@ function debounce(func, delay) {
     };
 }
 
-function AutocompleteWithAPI ({ getPatients }) {
+function AutocompleteWithAPI({getPatients, retrievePatient}) {
     const [options, setOptions] = useState([]);  // Store fetched options
     const [inputValue, setInputValue] = useState('');  // Current input value
     const [loading, setLoading] = useState(false);  // Loading state for the API request
@@ -30,6 +30,14 @@ function AutocompleteWithAPI ({ getPatients }) {
             setLoading(false);
         }
     };
+
+    const getLabel = (option) => {
+        if (option) {
+            return option.patronimo ? `${option.name} ${option.surname} του ${option.patronimo}, ΑΜΚΑ: ${option.amka}` : `${option.name} ${option.surname}, ΑΜΚΑ: ${option.amka}`
+        } else {
+            return null
+        }
+    }
 
     const debouncedFetchOptions = useCallback(
         debounce((query) => {
@@ -49,10 +57,14 @@ function AutocompleteWithAPI ({ getPatients }) {
     return (
         <Autocomplete
             options={options}
-            getOptionLabel={(option) => option.name || option}  // Customize based on your API response structure
+            getOptionLabel={(option) => getLabel(option) || option}  // Customize based on your API response structure
             loading={loading}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);
+            }}
+            onChange={(event, newValue) => {
+                const newVal = newValue || ''
+                retrievePatient(newVal);
             }}
             renderInput={(params) => (
                 <TextField

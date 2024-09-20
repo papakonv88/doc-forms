@@ -7,7 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AutocompleteWithAPI from "./AutocompleteWithAPI/AutocompleteWithAPI";
 
-function SearchPatient({openDialog, handleDialog, getPatients}) {
+function SearchPatient({openDialog, handleDialog, getPatients, retrievePatient}) {
 
     return (
             <Dialog
@@ -24,7 +24,7 @@ function SearchPatient({openDialog, handleDialog, getPatients}) {
                         Let Google help apps determine location. This means sending anonymous
                         location data to Google, even when no apps are running.
                     </DialogContentText>
-                    <AutocompleteWithAPI getPatients={getPatients} />
+                    <AutocompleteWithAPI getPatients={getPatients} retrievePatient={retrievePatient} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => handleDialog(false)} autoFocus>

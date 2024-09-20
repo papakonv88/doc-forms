@@ -65,6 +65,10 @@ function Patient() {
         return res.data;
     }
 
+    const retrievePatient = (info) => {
+        console.log(info, 'info');
+    }
+
     const patient = useMemo(() => {
         return Settings.technician.patient
     }, [])
@@ -126,7 +130,7 @@ function Patient() {
             <PageContainer>
                 <SectionContainer>
                     <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
-                                errors={errors} handleError={handleError} openDialog={openDialog} handleDialog={handleDialog} getPatients={getPatients}/>
+                                errors={errors} handleError={handleError} openDialog={openDialog} handleDialog={handleDialog} getPatients={getPatients} retrievePatient={retrievePatient}/>
                 </SectionContainer>
                 <Separator/>
                 <SectionContainer>
