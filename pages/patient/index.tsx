@@ -58,6 +58,13 @@ function Patient() {
         });
     }
 
+    const getPatients = async (query: string) => {
+        const res = await axios.get('/api/searchPatient', {
+            params: { q: query },
+        });
+        return res.data;
+    }
+
     const patient = useMemo(() => {
         return Settings.technician.patient
     }, [])
@@ -119,7 +126,7 @@ function Patient() {
             <PageContainer>
                 <SectionContainer>
                     <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
-                                errors={errors} handleError={handleError} openDialog={openDialog} handleDialog={handleDialog}/>
+                                errors={errors} handleError={handleError} openDialog={openDialog} handleDialog={handleDialog} getPatients={getPatients}/>
                 </SectionContainer>
                 <Separator/>
                 <SectionContainer>

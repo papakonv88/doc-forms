@@ -18,12 +18,13 @@ interface AddPatientInterface {
     handleError: (value: boolean, propertyName: string) => void;
     openDialog: boolean;
     handleDialog: (value: boolean) => void;
+    getPatients: (value: string) => Promise<any>;
 }
 
-function AddPatient({patient, handleValuesChange, formValues, errors, handleError, openDialog, handleDialog}: AddPatientInterface) {
+function AddPatient({patient, handleValuesChange, formValues, errors, handleError, openDialog, handleDialog, getPatients}: AddPatientInterface) {
     return (
         <>
-        <SearchPatient openDialog={openDialog} handleDialog={handleDialog} />
+        <SearchPatient openDialog={openDialog} handleDialog={handleDialog} getPatients={getPatients} />
         <Box width={'100%'}>
             <Box display={'flex'} flexDirection={'row'} columnGap={5} alignItems={'center'}>
                 <Typography variant={'h5'}>Εισαγωγή Ασθενούς</Typography>

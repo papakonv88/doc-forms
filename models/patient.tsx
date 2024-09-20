@@ -1,5 +1,13 @@
 import mongoose from 'mongoose';
 
+interface Patient extends Document {
+    id: Number;
+    name: string;
+    surname: string;
+    patronimo?: string;
+    amka: string;
+}
+
 const NewPatientSchema = new mongoose.Schema({
     id: {type: Number, unique: true},
     name: {type: String, required: true},
@@ -29,4 +37,4 @@ NewPatientSchema.pre('save', async function (next) {
     }
 });
 
-export default mongoose.models.NewPatient || mongoose.model('NewPatient', NewPatientSchema);
+export default mongoose.models.NewPatient || mongoose.model<Patient>('NewPatient', NewPatientSchema);
