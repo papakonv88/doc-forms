@@ -1,5 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
-import {Autocomplete, TextField} from "@mui/material";
+import {Autocomplete, Box, TextField} from "@mui/material";
+import MessageVariants from "../../../enums/MessageVariants";
+import {useAppContext} from "../../../context";
 
 function debounce(func, delay) {
     let timeoutId;
@@ -13,19 +15,19 @@ function debounce(func, delay) {
     };
 }
 
-function AutocompleteWithAPI({getPatients, retrievePatient}) {
-    const [options, setOptions] = useState([]);  // Store fetched options
-    const [inputValue, setInputValue] = useState('');  // Current input value
-    const [loading, setLoading] = useState(false);  // Loading state for the API request
+function AutocompleteWithAPI({getPatients, handleOptionChange}) {
+    const [options, setOptions] = useState([]);
+    const [inputValue, setInputValue] = useState('');
+    const [loading, setLoading] = useState(false);
+    const {handleOpenSnackbar} = useAppContext();
 
     const fetchOptions = async (query) => {
         setLoading(true);
         try {
             const response = await getPatients(query);
-            console.log(response, 'response')
             setOptions(response);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            handleOpenSnackbar('Σφάλμα κατά την φόρτωση δεδομένων', MessageVariants.ERROR)
         } finally {
             setLoading(false);
         }
@@ -55,34 +57,36 @@ function AutocompleteWithAPI({getPatients, retrievePatient}) {
     }, [inputValue, debouncedFetchOptions]);
 
     return (
-        <Autocomplete
-            options={options}
-            getOptionLabel={(option) => getLabel(option) || option}  // Customize based on your API response structure
-            loading={loading}
-            onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
-            }}
-            onChange={(event, newValue) => {
-                const newVal = newValue || ''
-                retrievePatient(newVal);
-            }}
-            renderInput={(params) => (
-                <TextField
-                    {...params}
-                    label="Αναζήτηση"
-                    variant="outlined"
-                    InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                            <>
-                                {loading ? <span>Φόρτωση...</span> : null}
-                                {params.InputProps.endAdornment}
-                            </>
-                        ),
-                    }}
-                />
-            )}
-        />
+        <Box sx={{ width: '550px', marginTop: 5, marginBottom: 5 }}>
+            <Autocomplete
+                options={options}
+                getOptionLabel={(option) => getLabel(option) || option}
+                loading={loading}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
+                onChange={(event, newValue) => {
+                    const newVal = newValue || null
+                    handleOptionChange(newVal);
+                }}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Αναζήτηση"
+                        variant="outlined"
+                        InputProps={{
+                            ...params.InputProps,
+                            endAdornment: (
+                                <>
+                                    {loading ? <span>Φόρτωση...</span> : null}
+                                    {params.InputProps.endAdornment}
+                                </>
+                            ),
+                        }}
+                    />
+                )}
+            />
+        </Box>
     );
 }
 

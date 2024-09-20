@@ -4,7 +4,17 @@ import {InputProps} from "../../types/types";
 import {CheckCircleOutlined, ErrorOutlined} from "@mui/icons-material";
 import {tokens} from "../../styles/tokens";
 
-function DropDown({hasNested, options, value, handleChange, property, errorMsg, label, error, handleError}: InputProps) {
+function DropDown({
+                      hasNested,
+                      options,
+                      value,
+                      handleChange,
+                      property,
+                      errorMsg,
+                      label,
+                      error,
+                      handleError
+                  }: InputProps) {
     const [inputValue, setInputValue] = useState('');
     const [touched, setTouched] = useState(false);
 
@@ -16,8 +26,9 @@ function DropDown({hasNested, options, value, handleChange, property, errorMsg, 
                     isOptionEqualToValue={(option, value) => option.value === value.value}
                     value={value as string}
                     onChange={(event, newValue) => {
+                        setTouched(true)
                         const newVal = newValue || ''
-                            handleChange(newVal, property)
+                        handleChange(newVal, property)
                         if (!newVal) {
                             handleError(true, property)
                         } else {
@@ -26,13 +37,10 @@ function DropDown({hasNested, options, value, handleChange, property, errorMsg, 
                     }}
                     inputValue={inputValue}
                     onInputChange={(event, newInputValue) => {
-                        if (!touched) {
-                            setTouched(true)
-                        }
                         setInputValue(newInputValue);
                     }}
                     options={options}
-                    sx={{width: '100%'}}
+                    sx={{width: 'calc(100% - 80px)'}}
                     renderInput={(params) => <TextField {...params} label={label} variant="standard"
                                                         required
                                                         error={error}

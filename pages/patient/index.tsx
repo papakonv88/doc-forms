@@ -14,7 +14,7 @@ import {useAppContext} from "../../context";
 type ValueType = InputProps['value'];
 
 function Patient() {
-
+    const { handleOpenSnackbar, handleLoader } = useAppContext();
     const [formValues, setFormValues] = useState({
         name: '',
         surname: '',
@@ -48,8 +48,6 @@ function Patient() {
     const handleDialog = (bool: boolean) => {
         setOpenDialog(bool);
     };
-
-    const { handleOpenSnackbar, handleLoader } = useAppContext();
 
     const handleError = (value: boolean, propertyName: string) => {
         setErrors({

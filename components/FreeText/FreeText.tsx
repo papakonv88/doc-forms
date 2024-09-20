@@ -10,10 +10,16 @@ function FreeText({hasNested, property, handleChange, value, label, errorMsg, va
 
     const valueValidator = validator ? new RegExp(validator) : '';
 
-    const handleValueChange = (e: SyntheticEvent) => {
-        if (!touched) {
+    const handleBlur = () => {
+        if (!value) {
+            handleError(true, property)
+            setTouched(true)
+        } else {
             setTouched(true)
         }
+    }
+
+    const handleValueChange = (e: SyntheticEvent) => {
         // @ts-ignore
         const newValue = e?.target?.value as any;
         handleChange(newValue, property)
@@ -22,7 +28,6 @@ function FreeText({hasNested, property, handleChange, value, label, errorMsg, va
             if (!valueValidator.test(newValue)) {
                 handleError(true, property)
             } else {
-                console.log('no error')
                 handleError(false, property)
             }
         }
@@ -33,9 +38,10 @@ function FreeText({hasNested, property, handleChange, value, label, errorMsg, va
             <TextField
                 key={`${property}_field`}
                 required
-                sx={{width: '100%'}}
+                sx={{width: 'calc(100% - 80px)'}}
                 label={label}
                 variant={'standard'}
+                onBlur={handleBlur}
                 InputLabelProps={{
                     sx: {width: '100%'}
                 }}
