@@ -38,7 +38,7 @@ function AutocompleteWithAPI ({ getPatients }) {
             } else {
                 setOptions([]);
             }
-        }, 300),  // 500ms debounce
+        }, 300),
         []
     );
 
@@ -57,13 +57,13 @@ function AutocompleteWithAPI ({ getPatients }) {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Search"
+                    label="Αναζήτηση"
                     variant="outlined"
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (
                             <>
-                                {loading ? <span>Loading...</span> : null}
+                                {loading ? <span>Φόρτωση...</span> : null}
                                 {params.InputProps.endAdornment}
                             </>
                         ),
