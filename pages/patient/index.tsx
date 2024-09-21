@@ -64,8 +64,20 @@ function Patient() {
     }
 
     const retrievePatient = (info) => {
-        console.log(info, 'info');
+        let newFormValues: any = {}
+        let newErrorValues: any = {}
+        for (const [key, value] of Object.entries(info)) {
+            if (Object.keys(formValues).includes(key)) {
+                newFormValues[key] = value
+            }
+        }
+        for (const key of Object.keys(newFormValues)) {
+            newErrorValues[key] = false
+        }
+        setFormValues((prev) => ({...prev, ...newFormValues}))
+        setErrors((prev) => ({...prev, ...newErrorValues}))
     }
+
 
     const patient = useMemo(() => {
         return Settings.technician.patient
@@ -74,6 +86,17 @@ function Patient() {
     const exam = useMemo(() => {
         return Settings.technician.exam
     }, [])
+
+    const hasValuesCHanged = (source, target) => {
+        for (let key in source) {
+            if (target.hasOwnProperty(key)) {
+                if (source[key] !== target[key]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
     const handleValuesChange = (value: ValueType, propertyName: string) => {
@@ -105,10 +128,14 @@ function Patient() {
 
         try {
             handleLoader(true);
-            const exists = await axios.get(`/api/insertPatient?amka=${formValues.amka}`);
-            if (exists.data?.isAmka) {
+            const result = await axios.get(`/api/insertPatient?amka=${formValues.amka}`);
+            const {patient} = result.data
+            if (patient?.id && hasValuesCHanged(formValues, patient)) {
+                alert('need to patch after confirmation')
                 handleLoader(false)
                 handleOpenSnackbar('Hello World', MessageVariants.ERROR)
+            } else if (patient?.id && !hasValuesCHanged(formValues, patient)) {
+                alert('Only save exam')
             } else {
                 const result = await axios.post('/api/insertPatient', {
                     name: 'Bill', surname: 'Papakonstantinou', patronimo: 'Konstantinos', amka: '12345648911'

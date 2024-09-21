@@ -52,10 +52,10 @@ function SearchPatient({openDialog, handleDialog, getPatients, retrievePatient})
                     <AutocompleteWithAPI getPatients={getPatients} handleOptionChange={handleOptionChange} />
                 </DialogContent>
                 <DialogActions sx={{ padding: 3 }}>
-                    <Button onClick={() => handleCancel()} variant={'contained'}>
+                    <Button onClick={() => handleCancel()}>
                         Ακυρωση
                     </Button>
-                    <Button onClick={() => handleConfirm()} disabled={!activeOption} autoFocus>
+                    <Button onClick={() => handleConfirm()} disabled={!activeOption} variant={'contained'} autoFocus>
                         Επιβεβαιωση
                     </Button>
                 </DialogActions>

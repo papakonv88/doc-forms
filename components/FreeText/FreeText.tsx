@@ -1,7 +1,7 @@
 import {Box, InputAdornment, TextField} from "@mui/material";
 import {CheckCircleOutlined, ErrorOutlined} from "@mui/icons-material";
 import {InputProps} from "../../types/types";
-import {SyntheticEvent, useState} from "react";
+import {SyntheticEvent, useEffect, useState} from "react";
 import {tokens} from "../../styles/tokens";
 
 function FreeText({hasNested, property, handleChange, value, label, errorMsg, validator, error, handleError}: InputProps) {
@@ -18,6 +18,12 @@ function FreeText({hasNested, property, handleChange, value, label, errorMsg, va
             setTouched(true)
         }
     }
+
+    useEffect(() => {
+        if (value && !touched) {
+            setTouched(true)
+        }
+    }, [value])
 
     const handleValueChange = (e: SyntheticEvent) => {
         // @ts-ignore
