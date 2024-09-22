@@ -10,11 +10,13 @@ import axios from "axios";
 import MessageVariants from "../../enums/MessageVariants";
 import PageContainer from "../../components/Containers/PageContainer";
 import {useAppContext} from "../../context";
+import ConfirmationDialog from "../../components/ConfirmationDialog/ConfirmationDialog";
 
 type ValueType = InputProps['value'];
 
 function Patient() {
-    const { handleOpenSnackbar, handleLoader } = useAppContext();
+    const {handleOpenSnackbar, handleLoader} = useAppContext();
+    const [dialog, setDialog] = useState({open: false, title: '', message: '', patientId: '', result: true});
     const [formValues, setFormValues] = useState({
         name: '',
         surname: '',
@@ -58,7 +60,7 @@ function Patient() {
 
     const getPatients = async (query: string) => {
         const res = await axios.get('/api/searchPatient', {
-            params: { q: query },
+            params: {q: query},
         });
         return res.data;
     }
@@ -106,6 +108,25 @@ function Patient() {
         });
     }
 
+    const handlePatchPatient = async (id) => {
+        try {
+            const {name, surname, patronimo} = formValues;
+            await axios.patch(`/api/insertPatient?id=${id}`,{name, surname, patronimo});
+            handleOpenSnackbar('Πραγματοποιήθηκε η ενημέρωση των στοιχείων του ασθενούς', MessageVariants.SUCCESS)
+            handleCloseConfirmDialog();
+        } catch (e) {
+            handleOpenSnackbar('Σφάλμα κατά την επικαιροποίηση των στοιχείων ασθενούς', MessageVariants.ERROR)
+        }
+    }
+
+    const handleCloseConfirmDialog = (type: null | string = null) => {
+            setDialog((prev) => ({...prev, open: false, result: type !== 'cancel'}));
+    }
+
+    const handleOpenConfirmDialog = (payload: {open: boolean; title: string; message: string; patientId: string; result: boolean;}) => {
+        setDialog(payload)
+    }
+
     const handleSubmit = async () => {
         let newObj: any = {};
         for (const [key, value] of Object.entries(formValues)) {
@@ -127,13 +148,15 @@ function Patient() {
         })
 
         try {
+            // IF ERROR RETURN!
+
             handleLoader(true);
             const result = await axios.get(`/api/insertPatient?amka=${formValues.amka}`);
             const {patient} = result.data
             if (patient?.id && hasValuesCHanged(formValues, patient)) {
-                alert('need to patch after confirmation')
+                handleOpenConfirmDialog({open: true, message: 'Φαίνεται ότι κάποια στοιχεία του επιλεγμένου ασθενούς έχουν αλλάξει. Είστε σίγουροι ότι θέλετε να προχωρήσετε στην επικαιροποίηση των στοιχείων του ασθενούς;', title: 'Ενημέρωση Στοιχείων Ασθενούς', patientId: patient._id, result: true})
                 handleLoader(false)
-                handleOpenSnackbar('Hello World', MessageVariants.ERROR)
+                if (!dialog.result) return;
             } else if (patient?.id && !hasValuesCHanged(formValues, patient)) {
                 alert('Only save exam')
             } else {
@@ -146,6 +169,8 @@ function Patient() {
         } catch (e) {
             handleLoader(false)
             handleOpenSnackbar('Hello World', MessageVariants.ERROR)
+        } finally {
+            handleLoader(false)
         }
 
     }
@@ -155,17 +180,21 @@ function Patient() {
             <PageContainer>
                 <SectionContainer>
                     <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
-                                errors={errors} handleError={handleError} openDialog={openDialog} handleDialog={handleDialog} getPatients={getPatients} retrievePatient={retrievePatient}/>
+                                errors={errors} handleError={handleError} openDialog={openDialog}
+                                handleDialog={handleDialog} getPatients={getPatients}
+                                retrievePatient={retrievePatient}/>
                 </SectionContainer>
                 <Separator/>
                 <SectionContainer>
                     <AddExam exam={exam} handleValuesChange={handleValuesChange} formValues={formValues} errors={errors}
                              handleError={handleError}/>
+                    <Box display={'flex'} justifyContent={'end'} mb={4} mt={7}>
+                        <Button onClick={handleSubmit} sx={{width: '350px'}} variant="contained"
+                                size={'large'}>Υποβολη</Button>
+                    </Box>
                 </SectionContainer>
-                <Box display={'flex'} justifyContent={'end'} pb={10}>
-                    <Button onClick={handleSubmit} sx={{width: '350px'}} variant="contained"
-                            size={'large'}>Υποβολη</Button>
-                </Box>
+                <ConfirmationDialog patientId={dialog.patientId} openDialog={dialog.open} message={dialog.message} action={handlePatchPatient}
+                                    title={dialog.title} handleClose={handleCloseConfirmDialog}/>
             </PageContainer>
 
         </>

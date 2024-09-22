@@ -10,9 +10,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(200).json({patient});
             break;
         case 'POST':
-            const newPatient = new NewPatient(req.body);
-            const result = await newPatient.save()
-            res.status(201).json({message: 'Patient added successfully', result});
+            const row = new NewPatient(req.body);
+            const newRow = await row.save()
+            res.status(201).json({message: 'Patient added successfully', newRow});
+            break;
+        case 'PATCH':
+            const { id } = req.query;
+            const payload = req.body
+             await NewPatient.findByIdAndUpdate(id, payload, {
+                runValidators: true
+            });
+            res.status(201).json({message: 'Patient updated successfully'});
             break;
         default:
             res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);

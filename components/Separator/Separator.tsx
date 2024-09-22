@@ -3,7 +3,7 @@ import {tokens} from "../../styles/tokens";
 
 function Separator() {
     return (
-        <Box width={'100%'} sx={{ height: 10, backgroundColor: tokens.colors.border }} />
+        <Box mt={10} mb={10} width={'100%'} sx={{ height: 10, backgroundColor: tokens.colors.border }} />
     )
 }
 

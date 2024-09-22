@@ -26,7 +26,7 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
     return (
         <>
         <SearchPatient openDialog={openDialog} handleDialog={handleDialog} getPatients={getPatients} retrievePatient={retrievePatient} />
-        <Box width={'100%'}>
+        <Box width={'100%'} mt={5}>
             <Box display={'flex'} flexDirection={'row'} columnGap={5} alignItems={'center'}>
                 <Typography variant={'h5'}>Εισαγωγή Ασθενούς</Typography>
                 <Tooltip title={'Ανάκτηση στοιχείων ασθενούς'} placement={'right'} >

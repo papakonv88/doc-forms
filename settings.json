@@ -5,36 +5,36 @@
         "propertyName": "name",
         "alternateName": "",
         "title": "onoma asthenous",
-        "label": "onoma asthenous",
+        "label": "Ονομα Ασθενούς",
         "type": "free",
-        "errorMsg": "wrong value",
+        "errorMsg": "Εισάγετε μια έγκυρη τιμή",
         "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
       },
       {
         "propertyName": "surname",
         "alternateName": "",
         "title": "eponimo asthenous",
-        "label": "eponimo asthenous",
+        "label": "Επώνυμο Ασθενούς",
         "type": "free",
-        "errorMsg": "wrong value",
+        "errorMsg": "Εισάγετε μια έγκυρη τιμή",
         "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
       },
       {
         "propertyName": "patronimo",
         "alternateName": "",
         "title": "patronimo",
-        "label": "patronimo",
+        "label": "Πατρώνυμο",
         "type": "free",
-        "errorMsg": "wrong value",
+        "errorMsg": "Εισάγετε μια έγκυρη τιμή",
         "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
       },
       {
         "propertyName": "amka",
         "alternateName": "",
         "title": "amka",
-        "label": "amka",
+        "label": "ΑΜΚΑ",
         "type": "free",
-        "errorMsg": "wrong value",
+        "errorMsg": "Εισάγετε μια έγκυρη τιμή",
         "validator": "^\\d{11}$"
       }
     ],

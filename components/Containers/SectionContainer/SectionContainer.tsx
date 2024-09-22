@@ -7,7 +7,8 @@ interface SectionContainerProps {
 
 function SectionContainer({children}: SectionContainerProps) {
     return (
-            <Stack mt={5} mb={15}>
+            <Stack maxWidth={'md'} sx={{margin: 'auto', overflowX: 'hidden', width: '100%'}}
+                   justifyContent={'center'}>
                 {children}
             </Stack>
     )
