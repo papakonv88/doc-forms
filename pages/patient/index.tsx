@@ -23,7 +23,9 @@ function Patient() {
         patronimo: '',
         amka: '',
         imerominia_katagrafis: '',
-        test: '',
+        typos_katagrafis: '',
+        parapombi: '',
+        aitia_eksetasis: '',
         methodoi_energopoiisis: {
             radio: '',
             string: ''
@@ -40,6 +42,9 @@ function Patient() {
         patronimo: false,
         amka: false,
         imerominia_katagrafis: false,
+        typos_katagrafis: false,
+        parapombi: false,
+        aitia_eksetasis: '',
         test: false,
         methodoi_energopoiisis: false,
         xronos_eksetasis: false
@@ -168,11 +173,10 @@ function Patient() {
             handleLoader(false)
         } catch (e) {
             handleLoader(false)
-            handleOpenSnackbar('Hello World', MessageVariants.ERROR)
+            handleOpenSnackbar('Σφάλμα κατά την αποθήκευση', MessageVariants.ERROR)
         } finally {
             handleLoader(false)
         }
-
     }
 
     return (

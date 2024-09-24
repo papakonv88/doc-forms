@@ -49,6 +49,69 @@
         "validator": ""
       },
       {
+        "propertyName": "typos_katagrafis",
+        "alternateName": "",
+        "title": "tipos katagrafis",
+        "label": "Τύπος Καταγραφής",
+        "type": "dropdown",
+        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
+        "validator": "",
+        "values": [
+          "ΗΕΓ ΡΟΥΤΙΝΑΣ",
+          "ΗΕΓ ΥΠΝΟΥ",
+          "ΗΕΓ ΜΕΤΑ ΑΠΌ ΣΤΕΡΗΣΗ ΥΠΝΟΥ",
+          "ΒΙΝΤΕΟ ΗΕΓ",
+          "ΜΕΛΕΤΗΣ ΥΠΝΟΥ"
+        ]
+      },
+      {
+        "propertyName": "parapombi",
+        "alternateName": "",
+        "title": "parapombi",
+        "label": "Παραπομπή",
+        "type": "dropdown",
+        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
+        "validator": "",
+        "values": [
+          "ΤΕΠ",
+          "ΕΙ",
+          "ΚΛΙΝΙΚΕΣ"
+        ]
+      },
+      {
+        "propertyName": "aitia_eksetasis",
+        "alternateName": "",
+        "title": "Αιτία Εξέτασης",
+        "label": "Αιτία Εξέτασης",
+        "type": "toggleButtonInput",
+        "errorMsg": "Επιλέξτε μια κατηγορία από την λίστα",
+        "validator": "",
+        "values": [
+          "λιστα",
+          "κειμενο"
+        ],
+        "radios": {
+          "λιστα": [
+            "ΚΑΣ",
+            "ΕΠΙΛΗΠΤΙΚΗ ΚΡΙΣΗ",
+            "ΕΠΙΛΗΨΙΑ",
+            "ΤΑΞΙΝΟΜΗΣΗ ΕΠΙΛΗΨΙΑΣ",
+            "ΕΚΤΙΜΗΣΗ ΑΝΤΑΠΟΚΡΙΣΗΣ ΣΤΗ ΦΑ",
+            "ΕΚΤΙΜΗΣΗ ΚΡΙΣΕΩΝ",
+            "ΕΚΤΙΜΗΣΗ ΜΕΣΟΚΡΙΣΙΚΩΝ ΕΚΦΟΡΤΙΣΕΩΝ",
+            "ΔΙΑΤΑΡΑΧΗ ΥΠΝΟΥ",
+            "ΠΑΡΟΞΥΝΤΙΚΟ ΕΠΕΙΣΟΔΙΟ"
+          ],
+          "κειμενο": [],
+          "errorMsg": {
+            "κειμενο": "Εισάγετε μια έγκυρη τιμή"
+          },
+          "validators": {
+            "κειμενο": "^.+$"
+          }
+        }
+      },
+      {
         "propertyName": "",
         "alternateName": "",
         "title": "arithmos eksetasis",
@@ -65,7 +128,11 @@
         "type": "dropdown",
         "errorMsg": "error message",
         "validator": "",
-        "values":["one", "two", "three"]
+        "values": [
+          "one",
+          "two",
+          "three"
+        ]
       },
       {
         "propertyName": "methodoi_energopoiisis",
@@ -75,10 +142,21 @@
         "type": "dropdownWithRadio",
         "errorMsg": "error message",
         "validator": "",
-        "values":["one", "two"],
+        "values": [
+          "one",
+          "two"
+        ],
         "radios": {
-          "one": ["1", "2", "3"],
-          "two": ["4", "5", "6"],
+          "one": [
+            "1",
+            "2",
+            "3"
+          ],
+          "two": [
+            "4",
+            "5",
+            "6"
+          ],
           "errorMsg": {}
         }
       },
@@ -90,10 +168,22 @@
         "type": "toggleButtonInput",
         "errorMsg": "error message",
         "validator": "",
-        "values":["days", "hours", "minutes"],
+        "values": [
+          "days",
+          "hours",
+          "minutes"
+        ],
         "radios": {
-          "hours": ["1", "2", "3"],
-          "minutes": ["4", "5", "6"],
+          "hours": [
+            "1",
+            "2",
+            "3"
+          ],
+          "minutes": [
+            "4",
+            "5",
+            "6"
+          ],
           "days": [],
           "errorMsg": {
             "days": "Εισάγετε εναν ακέραιο αριθμό μεγαλύτερο του 0"
