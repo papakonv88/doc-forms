@@ -112,13 +112,27 @@
         }
       },
       {
-        "propertyName": "",
+        "propertyName": "antispasmodiki_agogi",
         "alternateName": "",
-        "title": "arithmos eksetasis",
-        "label": "",
+        "title": "antispasmodiki_agogi",
+        "label": "Αντισπασμωδική Αγωγή",
+        "type": "dropdown",
+        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
+        "validator": "",
+        "values": [
+          "ΦΑΡΜΑΚΟ 1",
+          "ΦΑΡΜΑΚΟ 2",
+          "ΦΑΡΜΑΚΟ 3"
+        ]
+      },
+      {
+        "propertyName": "alli_agogi",
+        "alternateName": "",
+        "title": "alli agogi",
+        "label": "Άλλη Αγωγή",
         "type": "free",
-        "errorMsg": "rfrrfrg",
-        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
+        "errorMsg": "Εισάγετε μια έγκυρη τιμή",
+        "validator": "^.+$"
       },
       {
         "propertyName": "test",

@@ -25,7 +25,12 @@ function Patient() {
         imerominia_katagrafis: '',
         typos_katagrafis: '',
         parapombi: '',
-        aitia_eksetasis: '',
+        aitia_eksetasis: {
+            radio: '',
+            string: ''
+        },
+        antispasmodiki_agogi: '',
+        alli_agogi: '',
         methodoi_energopoiisis: {
             radio: '',
             string: ''
@@ -44,7 +49,9 @@ function Patient() {
         imerominia_katagrafis: false,
         typos_katagrafis: false,
         parapombi: false,
-        aitia_eksetasis: '',
+        aitia_eksetasis: false,
+        antispasmodiki_agogi: false,
+        alli_agogi: false,
         test: false,
         methodoi_energopoiisis: false,
         xronos_eksetasis: false

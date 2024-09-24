@@ -5,6 +5,8 @@ import DropDown from "../DropDown/DropDown";
 import ToggleButtonInput from "../ToggleButtonInput/ToggleButtonInput";
 import DatePickerWrapper from "../DatePickerWrapper/DatePickerWrapper";
 import InputType from "../../enums/InputTypes";
+import FreeText from "../FreeText/FreeText";
+import * as React from "react";
 
 type ValueType = InputProps['value'];
 
@@ -57,6 +59,16 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                                   radios={element.radios}
                                                   error={errors[element.propertyName as keyof FormValuesPatient]}
                                                   handleError={handleError}/>
+                    }
+                    if (element.type === InputType.FREE) {
+                        return <FreeText key={`${element.alternateName}_${idx}`} property={element.propertyName}
+                                         handleChange={handleValuesChange}
+                                         value={formValues[element.propertyName as keyof FormValuesPatient]}
+                                         label={element.label}
+                                         errorMsg={element.errorMsg} validator={element.validator}
+                                         error={errors[element.propertyName as keyof FormValuesPatient]}
+                                         handleError={handleError}
+                        />
                     }
                 })}
             </Stack>
