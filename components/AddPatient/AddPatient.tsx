@@ -42,6 +42,7 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
                                          handleChange={handleValuesChange}
                                          value={formValues[element.propertyName as keyof FormValuesPatient]}
                                          label={element.label}
+                                         required={element.required}
                                          errorMsg={element.errorMsg} validator={element.validator}
                                          error={errors[element.propertyName as keyof FormValuesPatient]}
                                          handleError={handleError}
@@ -52,6 +53,7 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
                                          property={element.propertyName} handleChange={handleValuesChange}
                                          value={formValues[element.propertyName as keyof FormValuesPatient]}
                                          label={element.label} errorMsg={element.errorMsg}
+                                         required={element.required}
                                          error={errors[element.propertyName as keyof FormValuesPatient]}
                                          handleError={handleError}/>
                     }

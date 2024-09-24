@@ -26,11 +26,11 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                 {exam.map((element: any, idx: number) => {
                     if (element.type === InputType.DATE) {
                         return <DatePickerWrapper key={`${element.alternateName}_${idx}`}
-                                         property={element.propertyName} handleChange={handleValuesChange}
-                                         value={formValues[element.propertyName as keyof FormValuesPatient]}
-                                         label={element.label} errorMsg={element.errorMsg}
-                                         error={errors[element.propertyName as keyof FormValuesPatient]}
-                                         handleError={handleError}/>
+                                                  property={element.propertyName} handleChange={handleValuesChange}
+                                                  value={formValues[element.propertyName as keyof FormValuesPatient]}
+                                                  label={element.label}
+                                                  error={errors[element.propertyName as keyof FormValuesPatient]}
+                                                  handleError={handleError}/>
                     }
                     if (element.type === InputType.DROPDOWN) {
                         return <DropDown key={`${element.alternateName}_${idx}`} options={element.values}
@@ -38,6 +38,7 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                          value={formValues[element.propertyName as keyof FormValuesPatient]}
                                          label={element.label} errorMsg={element.errorMsg}
                                          error={errors[element.propertyName as keyof FormValuesPatient]}
+                                         required={element.required}
                                          handleError={handleError}/>
                     }
                     if (element.type === InputType.DROPDOWN_WITH_RADIO) {
@@ -48,6 +49,7 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                                   errorMsg={element.errorMsg} validator={element.validator}
                                                   radios={element.radios}
                                                   error={errors[element.propertyName as keyof FormValuesPatient]}
+                                                  required={element.required}
                                                   handleError={handleError}/>
                     }
                     if (element.type === InputType.TOGGLE_BUTTON) {
@@ -55,9 +57,10 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                                   options={element.values} property={element.propertyName}
                                                   handleChange={handleValuesChange}
                                                   label={element.label}
-                                                  errorMsg={element.errorMsg} validator={element.validator}
+                                                  errorMsg={element.errorMsg}
                                                   radios={element.radios}
                                                   error={errors[element.propertyName as keyof FormValuesPatient]}
+                                                  required={element.required}
                                                   handleError={handleError}/>
                     }
                     if (element.type === InputType.FREE) {
@@ -67,6 +70,7 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                          label={element.label}
                                          errorMsg={element.errorMsg} validator={element.validator}
                                          error={errors[element.propertyName as keyof FormValuesPatient]}
+                                         required={element.required}
                                          handleError={handleError}
                         />
                     }

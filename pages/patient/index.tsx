@@ -141,6 +141,7 @@ function Patient() {
 
     const handleSubmit = async () => {
         let newObj: any = {};
+        // TODO check with validation reqex not empty string
         for (const [key, value] of Object.entries(formValues)) {
             if (!value && typeof value !== 'object') {
                 newObj[key] = true

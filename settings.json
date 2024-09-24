@@ -8,7 +8,8 @@
         "label": "Ονομα Ασθενούς",
         "type": "free",
         "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
+        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*",
+        "required": true
       },
       {
         "propertyName": "surname",
@@ -17,7 +18,8 @@
         "label": "Επώνυμο Ασθενούς",
         "type": "free",
         "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
+        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*",
+        "required": true
       },
       {
         "propertyName": "patronimo",
@@ -26,7 +28,8 @@
         "label": "Πατρώνυμο",
         "type": "free",
         "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*"
+        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*",
+        "required": true
       },
       {
         "propertyName": "amka",
@@ -35,7 +38,8 @@
         "label": "ΑΜΚΑ",
         "type": "free",
         "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^\\d{11}$"
+        "validator": "^\\d{11}$",
+        "required": true
       }
     ],
     "exam": [
@@ -46,7 +50,8 @@
         "label": "Ημερομηνία",
         "type": "date",
         "errorMsg": "Επιλέξτε ημερομηνία",
-        "validator": ""
+        "validator": "^d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+        "required": true
       },
       {
         "propertyName": "typos_katagrafis",
@@ -55,14 +60,15 @@
         "label": "Τύπος Καταγραφής",
         "type": "dropdown",
         "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
-        "validator": "",
+        "validator": "^.+$",
         "values": [
           "ΗΕΓ ΡΟΥΤΙΝΑΣ",
           "ΗΕΓ ΥΠΝΟΥ",
           "ΗΕΓ ΜΕΤΑ ΑΠΌ ΣΤΕΡΗΣΗ ΥΠΝΟΥ",
           "ΒΙΝΤΕΟ ΗΕΓ",
           "ΜΕΛΕΤΗΣ ΥΠΝΟΥ"
-        ]
+        ],
+        "required": true
       },
       {
         "propertyName": "parapombi",
@@ -71,12 +77,13 @@
         "label": "Παραπομπή",
         "type": "dropdown",
         "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
-        "validator": "",
+        "validator": "^.+$",
         "values": [
           "ΤΕΠ",
           "ΕΙ",
           "ΚΛΙΝΙΚΕΣ"
-        ]
+        ],
+        "required": true
       },
       {
         "propertyName": "aitia_eksetasis",
@@ -85,7 +92,7 @@
         "label": "Αιτία Εξέτασης",
         "type": "toggleButtonInput",
         "errorMsg": "Επιλέξτε μια κατηγορία από την λίστα",
-        "validator": "",
+        "validator": "^.+$",
         "values": [
           "λιστα",
           "κειμενο"
@@ -109,7 +116,8 @@
           "validators": {
             "κειμενο": "^.+$"
           }
-        }
+        },
+        "required": true
       },
       {
         "propertyName": "antispasmodiki_agogi",
@@ -118,12 +126,13 @@
         "label": "Αντισπασμωδική Αγωγή",
         "type": "dropdown",
         "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
-        "validator": "",
+        "validator": "^.+$",
         "values": [
           "ΦΑΡΜΑΚΟ 1",
           "ΦΑΡΜΑΚΟ 2",
           "ΦΑΡΜΑΚΟ 3"
-        ]
+        ],
+        "required": true
       },
       {
         "propertyName": "alli_agogi",
@@ -132,7 +141,8 @@
         "label": "Άλλη Αγωγή",
         "type": "free",
         "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^.+$"
+        "validator": "^.*$",
+        "required": false
       },
       {
         "propertyName": "test",
@@ -141,12 +151,13 @@
         "label": "testttttty",
         "type": "dropdown",
         "errorMsg": "error message",
-        "validator": "",
+        "validator": "^.+$",
         "values": [
           "one",
           "two",
           "three"
-        ]
+        ],
+        "required": true
       },
       {
         "propertyName": "methodoi_energopoiisis",
@@ -155,7 +166,7 @@
         "label": "testttttty",
         "type": "dropdownWithRadio",
         "errorMsg": "error message",
-        "validator": "",
+        "validator": "^.+$",
         "values": [
           "one",
           "two"
@@ -172,7 +183,8 @@
             "6"
           ],
           "errorMsg": {}
-        }
+        },
+        "required": true
       },
       {
         "propertyName": "xronos_eksetasis",
@@ -181,7 +193,7 @@
         "label": "Επιλέξτε διάρκεια",
         "type": "toggleButtonInput",
         "errorMsg": "error message",
-        "validator": "",
+        "validator": "^.+$",
         "values": [
           "days",
           "hours",
@@ -205,7 +217,8 @@
           "validators": {
             "days": "^[1-9]\\d*$"
           }
-        }
+        },
+        "required": true
       }
     ]
   }

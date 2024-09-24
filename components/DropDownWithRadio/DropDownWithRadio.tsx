@@ -4,7 +4,7 @@ import {InputProps} from "../../types/types";
 import DropDown from '../DropDown/DropDown';
 import {tokens} from "../../styles/tokens";
 
-function DropDownWithRadio({title, options, handleChange, property, errorMsg, label, radios, error, handleError}: InputProps) {
+function DropDownWithRadio({title, options, handleChange, property, errorMsg, label, radios, error, handleError, required}: InputProps) {
     const [radioValue, setRadioValue] = useState('')
     const [dropDownValue, setDropDownValue] = useState('')
 
@@ -39,6 +39,7 @@ function DropDownWithRadio({title, options, handleChange, property, errorMsg, la
         <Box display={'flex'} rowGap={3} flexDirection={'column'} sx={tokens.classes.formBox}>
             <Typography>{title}</Typography>
             <RadioGroup
+                aria-required={required}
                 value={radioValue}
                 onChange={handleRadioChange}
                 sx={{columnGap: 10}}
@@ -47,7 +48,7 @@ function DropDownWithRadio({title, options, handleChange, property, errorMsg, la
                     <FormControlLabel key={`${radio}_${idx}`} value={radio} control={<Radio/>} label={radio}/>
                 ))}
             </RadioGroup>
-            <DropDown key={radioValue} hasNested={true} options={radios[radioValue]} value={dropDownValue} handleChange={handleDropDownValue} property={property} errorMsg={errorMsg} label={label} error={error} handleError={handleError} />
+            <DropDown key={radioValue} hasNested={true} options={radios[radioValue]} value={dropDownValue} handleChange={handleDropDownValue} property={property} errorMsg={errorMsg} label={label} error={error} handleError={handleError} required={required} />
         </Box>
     )
 }

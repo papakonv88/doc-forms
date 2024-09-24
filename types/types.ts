@@ -11,6 +11,7 @@ export interface InputProps {
     hasNested?: boolean;
     error: boolean;
     handleError: (val:boolean, prop: string) => void;
+    required?: boolean;
 }
 
 export interface FormValuesPatient {

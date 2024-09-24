@@ -8,7 +8,7 @@ import {Box} from "@mui/material"
 import {CheckCircleOutlined, ErrorOutlined} from "@mui/icons-material";
 import dayjs from "dayjs";
 
-function DatePickerWrapper({property, handleChange, value, label, errorMsg, error, handleError}) {
+function DatePickerWrapper({property, handleChange, value, label, error, handleError}) {
     const [cleared, setCleared] = useState(false);
     const [touched, setTouched] = useState(false);
 

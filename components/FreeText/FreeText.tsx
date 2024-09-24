@@ -4,7 +4,7 @@ import {InputProps} from "../../types/types";
 import {SyntheticEvent, useEffect, useState} from "react";
 import {tokens} from "../../styles/tokens";
 
-function FreeText({hasNested, property, handleChange, value, label, errorMsg, validator, error, handleError}: InputProps) {
+function FreeText({hasNested, property, handleChange, value, label, errorMsg, validator, error, handleError, required}: InputProps) {
 
     const [touched, setTouched] = useState(false);
 
@@ -43,7 +43,7 @@ function FreeText({hasNested, property, handleChange, value, label, errorMsg, va
         <Box sx={hasNested ? tokens.classes.formBoxNested : tokens.classes.formBox}>
             <TextField
                 key={`${property}_field`}
-                required
+                required={required}
                 sx={{width: 'calc(100% - 80px)'}}
                 label={label}
                 variant={'standard'}

@@ -13,7 +13,8 @@ function DropDown({
                       errorMsg,
                       label,
                       error,
-                      handleError
+                      handleError,
+                      required
                   }: InputProps) {
     const [inputValue, setInputValue] = useState('');
     const [touched, setTouched] = useState(false);
@@ -22,6 +23,7 @@ function DropDown({
         <Box sx={hasNested ? tokens.classes.formBoxNested : tokens.classes.formBox}>
             {options && options?.length > 0 &&
                 <Autocomplete
+                    aria-required={required}
                     // @ts-ignore
                     isOptionEqualToValue={(option, value) => option.value === value.value}
                     value={value as string}
@@ -42,7 +44,7 @@ function DropDown({
                     options={options}
                     sx={{width: 'calc(100% - 80px)'}}
                     renderInput={(params) => <TextField {...params} label={label} variant="standard"
-                                                        required
+                                                        required={required}
                                                         error={error}
                                                         helperText={error ? errorMsg : ""}
                                                         FormHelperTextProps={{

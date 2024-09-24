@@ -5,7 +5,7 @@ import {tokens} from "../../styles/tokens";
 import DropDown from "../DropDown/DropDown";
 import FreeText from "../FreeText/FreeText";
 
-function ToggleButtonInput({title, options, handleChange, property, errorMsg, label, radios, validator, error, handleError}: InputProps) {
+function ToggleButtonInput({title, options, handleChange, property, errorMsg, label, radios, error, handleError, required}: InputProps) {
     const [unitValue, setUnitValue] = useState('')
     const [inputValue, setInputValue] = useState('')
 
@@ -46,12 +46,12 @@ function ToggleButtonInput({title, options, handleChange, property, errorMsg, la
             </ToggleButtonGroup>
             {radios[unitValue]?.length > 0 ?
                 <DropDown key={unitValue} hasNested={true} options={radios[unitValue]} value={inputValue}
-                          handleChange={handleInputValue} property={property} errorMsg={errorMsg} label={label} error={error} handleError={handleError}/> :
+                          handleChange={handleInputValue} property={property} errorMsg={errorMsg} label={label} error={error} handleError={handleError} required={required}/> :
                 <FreeText key={unitValue} hasNested={true} property={property}
                           handleChange={handleInputValue}
                           value={inputValue}
                           label={label}
-                          errorMsg={radios.errorMsg[unitValue]} validator={radios.validators[unitValue]} error={error} handleError={handleError}/>}
+                          errorMsg={radios.errorMsg[unitValue]} validator={radios.validators[unitValue]} error={error} handleError={handleError} required={required}/>}
         </Box>
     )
 }
