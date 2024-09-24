@@ -145,6 +145,45 @@
         "required": false
       },
       {
+        "propertyName": "kraniotomi",
+        "alternateName": "",
+        "title": "kraniotomi",
+        "label": "Κρανιοτομή",
+        "type": "dropdownWithRadio",
+        "errorMsg": "Εισάγετε μια τιμή από την λίστα",
+        "validator": "^.+$",
+        "values": [
+          "πλαγιωση",
+          "εντοπιση"
+        ],
+        "radios": {
+          "πλαγιωση": [
+            "ΔΕ", "ΑΡ", "ΑΜΦΟΤΕΡΟΠΛΕΥΡΑ"
+          ],
+          "εντοπιση": [
+            "ΜΕΤΩΠΙΑΙΑ", "ΚΡΟΤΑΦΙΚΑ", "ΒΡΕΓΜΑΤΙΚΑ", "ΚΕΝΤΡΙΚΑ", "ΙΝΙΑΚΑ"
+          ],
+          "errorMsg": {}
+        },
+        "required": true
+      },
+      {
+        "propertyName": "topothetisi_ilektrodion",
+        "alternateName": "",
+        "title": "topothetisi_ilektrodion",
+        "label": "Τοποθέτηση Ηλεκτροδίων",
+        "type": "dropdown",
+        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
+        "validator": "^.+$",
+        "values": [
+          "ΔΙΕΘΝΕΣ ΣΥΣΤΗΜΑ 10-20",
+          "ΔΙΕΘΝΕΣ ΣΥΣΤΗΜΑ 10-20 ΜΕ ΧΑΜΗΛΗ ΚΡΟΤΑΦΙΚΗ ΑΛΥΣΟ",
+          "ΔΙΕΘΝΕΣ ΣΥΣΤΗΜΑ 10-20 ΜΕ ΕΠΙΠΛΕΟΝ Τ1, Τ2 ΗΛΕΚΤΡΟΔΙΑ",
+          "ΔΙΕΘΝΕΣ ΣΥΣΤΗΜΑ 10-10"
+        ],
+        "required": true
+      },
+      {
         "propertyName": "test",
         "alternateName": "",
         "title": "tipos katagrafis",

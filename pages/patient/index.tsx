@@ -31,6 +31,11 @@ function Patient() {
         },
         antispasmodiki_agogi: '',
         alli_agogi: '',
+        kraniotomi: {
+            radio: '',
+            string: ''
+        },
+        topothetisi_ilektrodion: '',
         methodoi_energopoiisis: {
             radio: '',
             string: ''
@@ -52,6 +57,8 @@ function Patient() {
         aitia_eksetasis: false,
         antispasmodiki_agogi: false,
         alli_agogi: false,
+        kraniotomi: false,
+        topothetisi_ilektrodion: false,
         test: false,
         methodoi_energopoiisis: false,
         xronos_eksetasis: false
