@@ -39,6 +39,8 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                          label={element.label} errorMsg={element.errorMsg}
                                          error={errors[element.propertyName as keyof FormValuesPatient]}
                                          required={element.required}
+                                         isDepended={Boolean(element?.dependsOn)}
+                                         dependsOn={formValues[element?.dependsOn?.propertyName] !== element?.dependsOn?.value && Boolean(formValues[element?.dependsOn?.propertyName])}
                                          handleError={handleError}/>
                     }
                     if (element.type === InputType.DROPDOWN_WITH_RADIO) {

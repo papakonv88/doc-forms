@@ -12,6 +12,8 @@ export interface InputProps {
     error: boolean;
     handleError: (val:boolean, prop: string) => void;
     required?: boolean;
+    dependsOn?: boolean;
+    isDepended?: boolean;
 }
 
 export interface FormValuesPatient {

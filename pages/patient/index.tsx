@@ -36,14 +36,14 @@ function Patient() {
             string: ''
         },
         topothetisi_ilektrodion: '',
-        methodoi_energopoiisis: {
+        diarkeia_katagrafis: {
             radio: '',
             string: ''
         },
-        xronos_eksetasis: {
-            radio: '',
-            string: ''
-        }
+        epipedo_syneidisis: '',
+        synergasia: '',
+        yperpnoia_xronos: '',
+        yperpnoia_prospatheia: ''
     });
 
     const [errors, setErrors] = useState({
@@ -59,9 +59,11 @@ function Patient() {
         alli_agogi: false,
         kraniotomi: false,
         topothetisi_ilektrodion: false,
-        test: false,
-        methodoi_energopoiisis: false,
-        xronos_eksetasis: false
+        diarkeia_katagrafis: false,
+        epipedo_syneidisis: false,
+        synergasia: false,
+        yperpnoia_xronos: false,
+        yperpnoia_prospatheia: false
     });
 
     const [openDialog, setOpenDialog] = useState(false);
@@ -127,7 +129,7 @@ function Patient() {
         });
     }
 
-    const handlePatchPatient = async (id) => {
+    const handlePatchPatient = async (id: string | number) => {
         try {
             const {name, surname, patronimo} = formValues;
             await axios.patch(`/api/insertPatient?id=${id}`,{name, surname, patronimo});
@@ -148,7 +150,7 @@ function Patient() {
 
     const handleSubmit = async () => {
         let newObj: any = {};
-        // TODO check with validation reqex not empty string
+        // TODO check with validation settings.json reqex not empty string + dependsOn
         for (const [key, value] of Object.entries(formValues)) {
             if (!value && typeof value !== 'object') {
                 newObj[key] = true
