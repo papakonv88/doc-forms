@@ -43,7 +43,8 @@ function Patient() {
         epipedo_syneidisis: '',
         synergasia: '',
         yperpnoia_xronos: '',
-        yperpnoia_prospatheia: ''
+        yperpnoia_prospatheia: '',
+        dfe: ''
     });
 
     const [errors, setErrors] = useState({
@@ -63,7 +64,8 @@ function Patient() {
         epipedo_syneidisis: false,
         synergasia: false,
         yperpnoia_xronos: false,
-        yperpnoia_prospatheia: false
+        yperpnoia_prospatheia: false,
+        dfe: false
     });
 
     const [openDialog, setOpenDialog] = useState(false);
@@ -132,7 +134,7 @@ function Patient() {
     const handlePatchPatient = async (id: string | number) => {
         try {
             const {name, surname, patronimo} = formValues;
-            await axios.patch(`/api/insertPatient?id=${id}`,{name, surname, patronimo});
+            await axios.patch(`/api/insertPatient?id=${id}`, {name, surname, patronimo});
             handleOpenSnackbar('Πραγματοποιήθηκε η ενημέρωση των στοιχείων του ασθενούς', MessageVariants.SUCCESS)
             handleCloseConfirmDialog();
         } catch (e) {
@@ -141,32 +143,56 @@ function Patient() {
     }
 
     const handleCloseConfirmDialog = (type: null | string = null) => {
-            setDialog((prev) => ({...prev, open: false, result: type !== 'cancel'}));
+        setDialog((prev) => ({...prev, open: false, result: type !== 'cancel'}));
     }
 
-    const handleOpenConfirmDialog = (payload: {open: boolean; title: string; message: string; patientId: string; result: boolean;}) => {
+    const handleOpenConfirmDialog = (payload: {
+        open: boolean;
+        title: string;
+        message: string;
+        patientId: string;
+        result: boolean;
+    }) => {
         setDialog(payload)
     }
 
-    const handleSubmit = async () => {
-        let newObj: any = {};
-        // TODO check with validation settings.json reqex not empty string + dependsOn
-        for (const [key, value] of Object.entries(formValues)) {
-            if (!value && typeof value !== 'object') {
-                newObj[key] = true
-            } else if (typeof value === 'object' && value !== null) {
-                if (value instanceof Date) {
-                    newObj[key] = true
-                    return;
+    const errorPayload = (types: any[]) => {
+        let errors = {}
+        for (const type of types) {
+            const validator = new RegExp(type?.validator);
+            if (Boolean(type?.dependsOn)) {
+                errors[type.propertyName] = formValues[type.dependsOn.propertyName] !== type.dependsOn.value ? !validator.test(formValues[type.propertyName]) : false;
+            } else if (Boolean(type?.radios)) {
+                if (type.radios?.validators) {
+                    for (const key in type.radios.validators) {
+                        if (formValues[type.propertyName].radio === key) {
+                            const innerValidator = new RegExp(type.radios.validators[key])
+                            errors[type.propertyName] = !innerValidator.test(formValues[type.propertyName].string)
+                        } else {
+                            errors[type.propertyName] = !validator.test(formValues[type.propertyName].string)
+                        }
+                    }
+                    errors[type.propertyName] = !validator.test(formValues[type.propertyName].string)
                 }
-                if (!value?.string) {
-                    newObj[key] = true
+                if (!formValues[type.propertyName].radio) {
+                    errors[type.propertyName] = true;
                 }
+            } else {
+                errors[type.propertyName] = !validator.test(formValues[type.propertyName])
             }
         }
+        const isError = Object.values(errors).some(error => error === true);
+        return [errors, isError];
+    }
+
+    const handleSubmit = async () => {
+        const [patientErrors, isPatientError] = errorPayload(patient);
+        const [examErrors, isExamError] = errorPayload(exam);
+
         setErrors({
             ...errors,
-            ...newObj
+            ...patientErrors,
+            ...examErrors
         })
 
         try {
@@ -176,7 +202,13 @@ function Patient() {
             const result = await axios.get(`/api/insertPatient?amka=${formValues.amka}`);
             const {patient} = result.data
             if (patient?.id && hasValuesCHanged(formValues, patient)) {
-                handleOpenConfirmDialog({open: true, message: 'Φαίνεται ότι κάποια στοιχεία του επιλεγμένου ασθενούς έχουν αλλάξει. Είστε σίγουροι ότι θέλετε να προχωρήσετε στην επικαιροποίηση των στοιχείων του ασθενούς;', title: 'Ενημέρωση Στοιχείων Ασθενούς', patientId: patient._id, result: true})
+                handleOpenConfirmDialog({
+                    open: true,
+                    message: 'Φαίνεται ότι κάποια στοιχεία του επιλεγμένου ασθενούς έχουν αλλάξει. Είστε σίγουροι ότι θέλετε να προχωρήσετε στην επικαιροποίηση των στοιχείων του ασθενούς;',
+                    title: 'Ενημέρωση Στοιχείων Ασθενούς',
+                    patientId: patient._id,
+                    result: true
+                })
                 handleLoader(false)
                 if (!dialog.result) return;
             } else if (patient?.id && !hasValuesCHanged(formValues, patient)) {
@@ -214,7 +246,8 @@ function Patient() {
                                 size={'large'}>Υποβολη</Button>
                     </Box>
                 </SectionContainer>
-                <ConfirmationDialog patientId={dialog.patientId} openDialog={dialog.open} message={dialog.message} action={handlePatchPatient}
+                <ConfirmationDialog patientId={dialog.patientId} openDialog={dialog.open} message={dialog.message}
+                                    action={handlePatchPatient}
                                     title={dialog.title} handleClose={handleCloseConfirmDialog}/>
             </PageContainer>
 

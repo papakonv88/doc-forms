@@ -22,18 +22,16 @@ function ToggleButtonInput({title, options, handleChange, property, errorMsg, la
         setUnitValue(newValue)
         setInputValue('')
         // @ts-ignore
-        handleChange({value: '', units: ''}, property)
+        handleChange({radio: '', string: ''}, property)
     }
 
     const handleInputValue = (val: string, prop: string) => {
         setInputValue(val)
-        if (val) {
             // @ts-ignore
             handleChange({
                 radio: unitValue,
                 string: val
             }, property)
-        }
     }
 
     return (

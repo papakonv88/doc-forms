@@ -38,7 +38,7 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
             <Stack rowGap={5} mt={5} direction={'column'} sx={{width: '100%'}}>
                 {patient.map((element: any, idx: number) => {
                     if (element.type === InputType.FREE) {
-                        return <FreeText key={`${element.alternateName}_${idx}`} property={element.propertyName}
+                        return <FreeText key={`${element.propertyName}_${idx}`} property={element.propertyName}
                                          handleChange={handleValuesChange}
                                          value={formValues[element.propertyName as keyof FormValuesPatient]}
                                          label={element.label}
@@ -49,7 +49,7 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
                         />
                     }
                     if (element.type === InputType.DROPDOWN) {
-                        return <DropDown key={`${element.alternateName}_${idx}`} options={element.values}
+                        return <DropDown key={`${element.propertyName}_${idx}`} options={element.values}
                                          property={element.propertyName} handleChange={handleValuesChange}
                                          value={formValues[element.propertyName as keyof FormValuesPatient]}
                                          label={element.label} errorMsg={element.errorMsg}

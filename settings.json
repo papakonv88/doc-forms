@@ -3,7 +3,6 @@
     "patient": [
       {
         "propertyName": "name",
-        "alternateName": "",
         "title": "onoma asthenous",
         "label": "Ονομα Ασθενούς",
         "type": "free",
@@ -13,7 +12,6 @@
       },
       {
         "propertyName": "surname",
-        "alternateName": "",
         "title": "eponimo asthenous",
         "label": "Επώνυμο Ασθενούς",
         "type": "free",
@@ -23,7 +21,6 @@
       },
       {
         "propertyName": "patronimo",
-        "alternateName": "",
         "title": "patronimo",
         "label": "Πατρώνυμο",
         "type": "free",
@@ -33,7 +30,6 @@
       },
       {
         "propertyName": "amka",
-        "alternateName": "",
         "title": "amka",
         "label": "ΑΜΚΑ",
         "type": "free",
@@ -45,7 +41,6 @@
     "exam": [
       {
         "propertyName": "imerominia_katagrafis",
-        "alternateName": "imerominiaKatagrafis",
         "title": "Ημερομηνία Καταγραφής",
         "label": "Ημερομηνία",
         "type": "date",
@@ -55,7 +50,6 @@
       },
       {
         "propertyName": "typos_katagrafis",
-        "alternateName": "",
         "title": "tipos katagrafis",
         "label": "Τύπος Καταγραφής",
         "type": "dropdown",
@@ -72,7 +66,6 @@
       },
       {
         "propertyName": "parapombi",
-        "alternateName": "",
         "title": "parapombi",
         "label": "Παραπομπή",
         "type": "dropdown",
@@ -87,7 +80,6 @@
       },
       {
         "propertyName": "aitia_eksetasis",
-        "alternateName": "",
         "title": "Αιτία Εξέτασης",
         "label": "Αιτία Εξέτασης",
         "type": "toggleButtonInput",
@@ -121,7 +113,6 @@
       },
       {
         "propertyName": "antispasmodiki_agogi",
-        "alternateName": "",
         "title": "antispasmodiki_agogi",
         "label": "Αντισπασμωδική Αγωγή",
         "type": "dropdown",
@@ -136,7 +127,6 @@
       },
       {
         "propertyName": "alli_agogi",
-        "alternateName": "",
         "title": "alli agogi",
         "label": "Άλλη Αγωγή",
         "type": "free",
@@ -146,7 +136,6 @@
       },
       {
         "propertyName": "kraniotomi",
-        "alternateName": "",
         "title": "Κρανιοτομή",
         "label": "Κρανιοτομή",
         "type": "dropdownWithRadio",
@@ -169,7 +158,6 @@
       },
       {
         "propertyName": "topothetisi_ilektrodion",
-        "alternateName": "",
         "title": "topothetisi_ilektrodion",
         "label": "Τοποθέτηση Ηλεκτροδίων",
         "type": "dropdown",
@@ -185,7 +173,6 @@
       },
       {
         "propertyName": "diarkeia_katagrafis",
-        "alternateName": "",
         "title": "Διάρκεια Καταγραφής",
         "label": "Επιλέξτε διάρκεια",
         "type": "toggleButtonInput",
@@ -221,7 +208,6 @@
       },
       {
         "propertyName": "epipedo_syneidisis",
-        "alternateName": "",
         "title": "Επίπεδο Συνείδησης Ασθενούς",
         "label": "Επίπεδο Συνείδησης Ασθενούς",
         "type": "dropdown",
@@ -239,7 +225,6 @@
       },
       {
         "propertyName": "synergasia",
-        "alternateName": "",
         "title": "Συνεργασία Ασθενούς",
         "label": "Συνεργασία Ασθενούς",
         "type": "dropdown",
@@ -257,7 +242,6 @@
       },
       {
         "propertyName": "yperpnoia_xronos",
-        "alternateName": "",
         "title": "Υπερπνοια - Χρόνος",
         "label": "Υπερπνοια - Χρόνος",
         "type": "dropdown",
@@ -273,7 +257,6 @@
       },
       {
         "propertyName": "yperpnoia_prospatheia",
-        "alternateName": "",
         "title": "Υπερπνοια - Προσπάθεια Ασθενούς",
         "label": "Υπερπνοια - Προσπάθεια Ασθενούς",
         "type": "dropdown",
@@ -289,6 +272,21 @@
           "propertyName": "yperpnoia_xronos",
           "value": "Δεν πραγματοποιήθηκε"
         }
+      },
+      {
+        "propertyName": "dfe",
+        "title": "ΔΦΕ",
+        "label": "ΔΦΕ",
+        "type": "dropdown",
+        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
+        "validator": "^.+$",
+        "values": [
+          "1Hz – 20 Hz",
+          "1Hz – 25Hz",
+          "1Hz – 60Hz",
+          "Δεν πραγματοποιήθηκε"
+        ],
+        "required": true
       }
     ]
   }

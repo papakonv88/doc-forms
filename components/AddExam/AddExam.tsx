@@ -25,7 +25,7 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
             <Stack rowGap={5} mt={5} direction={'column'} sx={{width: '100%'}}>
                 {exam.map((element: any, idx: number) => {
                     if (element.type === InputType.DATE) {
-                        return <DatePickerWrapper key={`${element.alternateName}_${idx}`}
+                        return <DatePickerWrapper key={`${element.propertyName}_${idx}`}
                                                   property={element.propertyName} handleChange={handleValuesChange}
                                                   value={formValues[element.propertyName as keyof FormValuesPatient]}
                                                   label={element.label}
@@ -33,7 +33,7 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                                   handleError={handleError}/>
                     }
                     if (element.type === InputType.DROPDOWN) {
-                        return <DropDown key={`${element.alternateName}_${idx}`} options={element.values}
+                        return <DropDown key={`${element.propertyName}_${idx}`} options={element.values}
                                          property={element.propertyName} handleChange={handleValuesChange}
                                          value={formValues[element.propertyName as keyof FormValuesPatient]}
                                          label={element.label} errorMsg={element.errorMsg}
@@ -44,7 +44,7 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                          handleError={handleError}/>
                     }
                     if (element.type === InputType.DROPDOWN_WITH_RADIO) {
-                        return <DropDownWithRadio key={`${element.alternateName}_${idx}`} title={element.title}
+                        return <DropDownWithRadio key={`${element.propertyName}_${idx}`} title={element.title}
                                                   options={element.values} property={element.propertyName}
                                                   handleChange={handleValuesChange}
                                                   label={element.label}
@@ -55,7 +55,7 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                                   handleError={handleError}/>
                     }
                     if (element.type === InputType.TOGGLE_BUTTON) {
-                        return <ToggleButtonInput key={`${element.alternateName}_${idx}`} title={element.title}
+                        return <ToggleButtonInput key={`${element.propertyName}_${idx}`} title={element.title}
                                                   options={element.values} property={element.propertyName}
                                                   handleChange={handleValuesChange}
                                                   label={element.label}
@@ -66,7 +66,7 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                                   handleError={handleError}/>
                     }
                     if (element.type === InputType.FREE) {
-                        return <FreeText key={`${element.alternateName}_${idx}`} property={element.propertyName}
+                        return <FreeText key={`${element.propertyName}_${idx}`} property={element.propertyName}
                                          handleChange={handleValuesChange}
                                          value={formValues[element.propertyName as keyof FormValuesPatient]}
                                          label={element.label}
