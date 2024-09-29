@@ -1,5 +1,4 @@
 enum InputType {
-    RADIO = "radio",
     DATE = "date",
     DROPDOWN = "dropdown",
     FREE = "free",

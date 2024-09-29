@@ -11,6 +11,7 @@ import MessageVariants from "../../enums/MessageVariants";
 import PageContainer from "../../components/Containers/PageContainer";
 import {useAppContext} from "../../context";
 import ConfirmationDialog from "../../components/ConfirmationDialog/ConfirmationDialog";
+import {useErrorPayload} from "../../hooks";
 
 type ValueType = InputProps['value'];
 
@@ -112,6 +113,10 @@ function Patient() {
         return Settings.technician.exam
     }, [])
 
+
+    const {validate: validatePatient} = useErrorPayload(formValues, patient);
+    const {validate: validateExam} = useErrorPayload(formValues, exam);
+
     const hasValuesCHanged = (source, target) => {
         for (let key in source) {
             if (target.hasOwnProperty(key)) {
@@ -156,38 +161,10 @@ function Patient() {
         setDialog(payload)
     }
 
-    const errorPayload = (types: any[]) => {
-        let errors = {}
-        for (const type of types) {
-            const validator = new RegExp(type?.validator);
-            if (Boolean(type?.dependsOn)) {
-                errors[type.propertyName] = formValues[type.dependsOn.propertyName] !== type.dependsOn.value ? !validator.test(formValues[type.propertyName]) : false;
-            } else if (Boolean(type?.radios)) {
-                if (type.radios?.validators) {
-                    for (const key in type.radios.validators) {
-                        if (formValues[type.propertyName].radio === key) {
-                            const innerValidator = new RegExp(type.radios.validators[key])
-                            errors[type.propertyName] = !innerValidator.test(formValues[type.propertyName].string)
-                        } else {
-                            errors[type.propertyName] = !validator.test(formValues[type.propertyName].string)
-                        }
-                    }
-                    errors[type.propertyName] = !validator.test(formValues[type.propertyName].string)
-                }
-                if (!formValues[type.propertyName].radio) {
-                    errors[type.propertyName] = true;
-                }
-            } else {
-                errors[type.propertyName] = !validator.test(formValues[type.propertyName])
-            }
-        }
-        const isError = Object.values(errors).some(error => error === true);
-        return [errors, isError];
-    }
-
     const handleSubmit = async () => {
-        const [patientErrors, isPatientError] = errorPayload(patient);
-        const [examErrors, isExamError] = errorPayload(exam);
+
+        const [patientErrors, isPatientError] = validatePatient();
+        const [examErrors, isExamError] = validateExam();
 
         setErrors({
             ...errors,
@@ -196,7 +173,9 @@ function Patient() {
         })
 
         try {
-            // IF ERROR RETURN!
+            if (isPatientError || isExamError) {
+                return;
+            }
 
             handleLoader(true);
             const result = await axios.get(`/api/insertPatient?amka=${formValues.amka}`);
