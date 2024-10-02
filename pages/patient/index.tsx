@@ -32,10 +32,8 @@ function Patient() {
         },
         antispasmodiki_agogi: '',
         alli_agogi: '',
-        kraniotomi: {
-            radio: '',
-            string: ''
-        },
+        kraniotomi_plagiosi: '',
+        kraniotomi_entopisi: '',
         topothetisi_ilektrodion: '',
         diarkeia_katagrafis: {
             radio: '',
@@ -59,7 +57,8 @@ function Patient() {
         aitia_eksetasis: false,
         antispasmodiki_agogi: false,
         alli_agogi: false,
-        kraniotomi: false,
+        kraniotomi_plagiosi: false,
+        kraniotomi_entopisi: false,
         topothetisi_ilektrodion: false,
         diarkeia_katagrafis: false,
         epipedo_syneidisis: false,

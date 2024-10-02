@@ -135,25 +135,27 @@
         "required": false
       },
       {
-        "propertyName": "kraniotomi",
-        "title": "Κρανιοτομή",
-        "label": "Κρανιοτομή",
-        "type": "dropdownWithRadio",
-        "errorMsg": "Εισάγετε μια τιμή από την λίστα",
+        "propertyName": "kraniotomi_plagiosi",
+        "title": "kraniotomi_plagiosi",
+        "label": "Κρανιοτομή - Πλαγίωση",
+        "type": "dropdown",
+        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
         "validator": "^.+$",
         "values": [
-          "πλαγιωση",
-          "εντοπιση"
+          "ΔΕ", "ΑΡ", "ΑΜΦΟΤΕΡΟΠΛΕΥΡΑ"
         ],
-        "radios": {
-          "πλαγιωση": [
-            "ΔΕ", "ΑΡ", "ΑΜΦΟΤΕΡΟΠΛΕΥΡΑ"
-          ],
-          "εντοπιση": [
-            "ΜΕΤΩΠΙΑΙΑ", "ΚΡΟΤΑΦΙΚΑ", "ΒΡΕΓΜΑΤΙΚΑ", "ΚΕΝΤΡΙΚΑ", "ΙΝΙΑΚΑ"
-          ],
-          "errorMsg": {}
-        },
+        "required": true
+      },
+      {
+        "propertyName": "kraniotomi_entopisi",
+        "title": "kraniotomi_entopisi",
+        "label": "Κρανιοτομή - Εντόπιση",
+        "type": "dropdown",
+        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
+        "validator": "^.+$",
+        "values": [
+          "ΜΕΤΩΠΙΑΙΑ", "ΚΡΟΤΑΦΙΚΑ", "ΒΡΕΓΜΑΤΙΚΑ", "ΚΕΝΤΡΙΚΑ", "ΙΝΙΑΚΑ"
+        ],
         "required": true
       },
       {
