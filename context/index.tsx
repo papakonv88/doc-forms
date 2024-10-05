@@ -1,8 +1,8 @@
-import { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
-const AppContext = createContext(null);
+const AppContext = createContext<any | null>(null);
 
-export const AppProvider = ({ children }) => {
+export const AppProvider = ({ children }: any) => {
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState('');
     const [type, setType] = useState('info');
@@ -11,13 +11,13 @@ export const AppProvider = ({ children }) => {
         setIsOpen(false)
     }
 
-    const handleOpenSnackbar = (message, type) => {
+    const handleOpenSnackbar = (message: string, type: string) => {
         setMessage(message);
         setType(type);
         setIsOpen(true);
     };
 
-    const handleLoader = (val) => {
+    const handleLoader = (val: boolean) => {
         setIsLoading(val);
     }
 
@@ -28,4 +28,4 @@ export const AppProvider = ({ children }) => {
     );
 };
 
-export const useAppContext = () => useContext(AppContext);
+export const useAppContext = () => useContext<any>(AppContext);

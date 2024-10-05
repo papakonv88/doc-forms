@@ -6,6 +6,7 @@ import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import InputType from "../../enums/InputTypes";
 import SearchPatient from "../SearchPatient/SearchPatient";
 import * as React from "react";
+import DatePickerWrapper from "../DatePickerWrapper/DatePickerWrapper";
 
 type ValueType = InputProps['value'];
 
@@ -56,6 +57,14 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
                                          required={element.required}
                                          error={errors[element.propertyName as keyof FormValuesPatient]}
                                          handleError={handleError}/>
+                    }
+                    if (element.type === InputType.DATE) {
+                        return <DatePickerWrapper key={`${element.propertyName}_${idx}`}
+                                                  property={element.propertyName} handleChange={handleValuesChange}
+                                                  value={formValues[element.propertyName as keyof FormValuesPatient]}
+                                                  label={element.label}
+                                                  error={errors[element.propertyName as keyof FormValuesPatient]}
+                                                  handleError={handleError}/>
                     }
                 })}
             </Stack>

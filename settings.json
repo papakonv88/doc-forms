@@ -25,8 +25,8 @@
         "label": "Πατρώνυμο",
         "type": "free",
         "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*",
-        "required": true
+        "validator": "^.*$",
+        "required": false
       },
       {
         "propertyName": "amka",
@@ -35,6 +35,15 @@
         "type": "free",
         "errorMsg": "Εισάγετε μια έγκυρη τιμή",
         "validator": "^\\d{11}$",
+        "required": true
+      },
+      {
+        "propertyName": "imerominia_genisis",
+        "title": "Ημερομηνία Γέννησης",
+        "label": "Ημερομηνία Γέννησης",
+        "type": "date",
+        "errorMsg": "Επιλέξτε ημερομηνία",
+        "validator": "^.+$",
         "required": true
       }
     ],

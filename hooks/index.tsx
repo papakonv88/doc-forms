@@ -1,10 +1,10 @@
 import {useCallback} from 'react';
 import InputTypes from "../enums/InputTypes";
 
-export const useErrorPayload = (formValues, types) => {
+export const useErrorPayload = (formValues: any, types: any) => {
 
     const validate = useCallback(() => {
-        let newErrors = {};
+        let newErrors: any = {};
         for (const type of types) {
             const validator = new RegExp(type?.validator);
             if (type.type === InputTypes.TOGGLE_BUTTON || type.type === InputTypes.DROPDOWN_WITH_RADIO) {

@@ -23,6 +23,7 @@ function Patient() {
         surname: '',
         patronimo: '',
         amka: '',
+        imerominia_genisis: '',
         imerominia_katagrafis: '',
         typos_katagrafis: '',
         parapombi: '',
@@ -51,6 +52,7 @@ function Patient() {
         surname: false,
         patronimo: false,
         amka: false,
+        imerominia_genisis: false,
         imerominia_katagrafis: false,
         typos_katagrafis: false,
         parapombi: false,
@@ -88,7 +90,7 @@ function Patient() {
         return res.data;
     }
 
-    const retrievePatient = (info) => {
+    const retrievePatient = (info: any) => {
         let newFormValues: any = {}
         let newErrorValues: any = {}
         for (const [key, value] of Object.entries(info)) {
@@ -116,7 +118,7 @@ function Patient() {
     const {validate: validatePatient} = useErrorPayload(formValues, patient);
     const {validate: validateExam} = useErrorPayload(formValues, exam);
 
-    const hasValuesCHanged = (source, target) => {
+    const hasValuesCHanged = (source: any, target: any) => {
         for (let key in source) {
             if (target.hasOwnProperty(key)) {
                 if (source[key] !== target[key]) {
@@ -137,8 +139,8 @@ function Patient() {
 
     const handlePatchPatient = async (id: string | number) => {
         try {
-            const {name, surname, patronimo} = formValues;
-            await axios.patch(`/api/insertPatient?id=${id}`, {name, surname, patronimo});
+            const {name, surname, patronimo, imerominia_genisis} = formValues;
+            await axios.patch(`/api/insertPatient?id=${id}`, {name, surname, patronimo, imerominia_genisis});
             handleOpenSnackbar('Πραγματοποιήθηκε η ενημέρωση των στοιχείων του ασθενούς', MessageVariants.SUCCESS)
             handleCloseConfirmDialog();
         } catch (e) {
@@ -193,7 +195,7 @@ function Patient() {
                 alert('Only save exam')
             } else {
                 const result = await axios.post('/api/insertPatient', {
-                    name: 'Bill', surname: 'Papakonstantinou', patronimo: 'Konstantinos', amka: '12345648911'
+                    name: formValues['name'], surname: formValues['surname'], patronimo: formValues['patronimo'], amka: formValues['amka'], imerominia_genisis: formValues['imerominia_genisis']
                 })
                 console.log('new row', result)
             }

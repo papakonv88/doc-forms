@@ -11,16 +11,16 @@ function FreeText({hasNested, property, handleChange, value, label, errorMsg, va
     const valueValidator = validator ? new RegExp(validator) : '';
 
     const handleBlur = () => {
-        if (!value) {
+        if (!value && required) {
             handleError(true, property)
             setTouched(true)
-        } else {
+        } else if (required) {
             setTouched(true)
         }
     }
 
     useEffect(() => {
-        if (value && !touched) {
+        if (value && !touched && required) {
             setTouched(true)
         }
     }, [value])

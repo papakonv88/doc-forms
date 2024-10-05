@@ -40,10 +40,12 @@ function DropDown({
                             isOptionEqualToValue={(option, value) => option.value === value.value}
                             value={value as string}
                             onChange={(event, newValue) => {
-                                setTouched(true)
+                                if (required) {
+                                    setTouched(true)
+                                }
                                 const newVal = newValue || ''
                                 handleChange(newVal, property)
-                                if (!newVal) {
+                                if (!newVal && required) {
                                     handleError(true, property)
                                 } else {
                                     handleError(false, property)

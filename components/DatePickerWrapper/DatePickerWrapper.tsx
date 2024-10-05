@@ -2,13 +2,14 @@ import * as React from 'react';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
-import { useState} from "react";
+import {useState} from "react";
 import {tokens} from "../../styles/tokens";
 import {Box} from "@mui/material"
 import {CheckCircleOutlined, ErrorOutlined} from "@mui/icons-material";
 import dayjs from "dayjs";
+import {InputProps} from "../../types/types";
 
-function DatePickerWrapper({property, handleChange, value, label, error, handleError}) {
+function DatePickerWrapper({property, handleChange, value, label, error, handleError}: InputProps) {
     const [cleared, setCleared] = useState(false);
     const [touched, setTouched] = useState(false);
 
@@ -31,7 +32,7 @@ function DatePickerWrapper({property, handleChange, value, label, error, handleE
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                     sx={{ width: '350px' }}
-                    disablePast={true}
+                    disableFuture={true}
                     label={label}
                     value={value ? dayjs(value) : null}
                     onChange={(newValue) => handleDateChange(newValue)}

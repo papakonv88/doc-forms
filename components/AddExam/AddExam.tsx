@@ -29,6 +29,7 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                                   property={element.propertyName} handleChange={handleValuesChange}
                                                   value={formValues[element.propertyName as keyof FormValuesPatient]}
                                                   label={element.label}
+                                                  errorMsg={''}
                                                   error={errors[element.propertyName as keyof FormValuesPatient]}
                                                   handleError={handleError}/>
                     }

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, {Schema} from 'mongoose';
 
 interface Patient extends Document {
     id: Number;
@@ -6,6 +6,7 @@ interface Patient extends Document {
     surname: string;
     patronimo?: string;
     amka: string;
+    imerominia_genisis: Date;
 }
 
 const NewPatientSchema = new mongoose.Schema({
@@ -16,6 +17,7 @@ const NewPatientSchema = new mongoose.Schema({
     amka: {
         type: String, required: true, unique: true, length: 11
     },
+    imerominia_genisis: {type: Date, required: true}
 }, {timestamps: true});
 
 NewPatientSchema.pre('save', async function (next) {
