@@ -118,7 +118,7 @@ function Patient() {
     const {validate: validatePatient} = useErrorPayload(formValues, patient);
     const {validate: validateExam} = useErrorPayload(formValues, exam);
 
-    const hasValuesCHanged = (source: any, target: any) => {
+    const hasValuesChanged = (source: any, target: any) => { // TODO: Dont work as expected, to be fixed
         for (let key in source) {
             if (target.hasOwnProperty(key)) {
                 if (source[key] !== target[key]) {
@@ -181,7 +181,7 @@ function Patient() {
             handleLoader(true);
             const result = await axios.get(`/api/insertPatient?amka=${formValues.amka}`);
             const {patient} = result.data
-            if (patient?.id && hasValuesCHanged(formValues, patient)) {
+            if (patient?.id && hasValuesChanged(formValues, patient)) {
                 handleOpenConfirmDialog({
                     open: true,
                     message: 'Φαίνεται ότι κάποια στοιχεία του επιλεγμένου ασθενούς έχουν αλλάξει. Είστε σίγουροι ότι θέλετε να προχωρήσετε στην επικαιροποίηση των στοιχείων του ασθενούς;',
@@ -191,13 +191,25 @@ function Patient() {
                 })
                 handleLoader(false)
                 if (!dialog.result) return;
-            } else if (patient?.id && !hasValuesCHanged(formValues, patient)) {
-                alert('Only save exam')
-            } else {
-                const result = await axios.post('/api/insertPatient', {
-                    name: formValues['name'], surname: formValues['surname'], patronimo: formValues['patronimo'], amka: formValues['amka'], imerominia_genisis: formValues['imerominia_genisis']
+            } else if (patient?.id && !hasValuesChanged(formValues, patient)) {
+                const {name, surname, patronimo, amka, imerominia_genisis, ...rest} = formValues;
+                const result = await axios.post('/api/insertExam', {
+                    ...rest,
+                    patiendId: patient.id
                 })
-                console.log('new row', result)
+            } else {
+                const {name, surname, patronimo, amka, imerominia_genisis, ...rest} = formValues;
+                const result = await axios.post('/api/insertPatient', {
+                    name, surname, patronimo, amka, imerominia_genisis
+                })
+
+                const patientId = result.data?.newRow?.id;
+                if (patientId) {
+                    await axios.post('/api/insertExam', {
+                        ...rest,
+                        patientId
+                    })
+                }
             }
             handleLoader(false)
         } catch (e) {
