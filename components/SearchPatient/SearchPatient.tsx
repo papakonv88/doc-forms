@@ -7,9 +7,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import AutocompleteWithAPI from "./AutocompleteWithAPI/AutocompleteWithAPI";
 import {useState} from "react";
 
-function SearchPatient({openDialog, handleDialog, getPatients, retrievePatient}) {
+function SearchPatient({openDialog, handleDialog, getPatients, retrievePatient}: any) {
     const [activeOption, setActiveOption] = useState(null);
-    const handleOptionChange = (option) => {
+    const handleOptionChange = (option: any) => {
         setActiveOption(option)
     }
 
@@ -24,7 +24,7 @@ function SearchPatient({openDialog, handleDialog, getPatients, retrievePatient})
         handleDialog(false);
     }
 
-    const handleDialogClose = (event, reason) => {
+    const handleDialogClose = (event: any, reason: any) => {
         if (reason === 'backdropClick') {
             return;
         }
