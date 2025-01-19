@@ -12,6 +12,7 @@ import PageContainer from "../../components/Containers/PageContainer";
 import {useAppContext} from "../../context";
 import ConfirmationDialog from "../../components/ConfirmationDialog/ConfirmationDialog";
 import {useErrorPayload} from "../../hooks";
+import {saveExam, savePatient} from "../../utils";
 
 type ValueType = InputProps['value'];
 
@@ -193,20 +194,25 @@ function Patient() {
                 if (!dialog.result) return;
             } else if (patient?.id && !hasValuesChanged(formValues, patient)) {
                 const {name, surname, patronimo, amka, imerominia_genisis, ...rest} = formValues;
-                const result = await axios.post('/api/insertExam', {
+                console.log('hello')
+                console.log(patient)
+                await saveExam({
                     ...rest,
-                    patiendId: patient.id
+                    patient: patient._id,
+                    patientId: patient.id
                 })
             } else {
                 const {name, surname, patronimo, amka, imerominia_genisis, ...rest} = formValues;
-                const result = await axios.post('/api/insertPatient', {
+                const result = await savePatient({
                     name, surname, patronimo, amka, imerominia_genisis
                 })
 
                 const patientId = result.data?.newRow?.id;
+                const patientUId = result.data?.newRow?._id;
                 if (patientId) {
-                    await axios.post('/api/insertExam', {
+                    await saveExam({
                         ...rest,
+                        patient: patientUId,
                         patientId
                     })
                 }

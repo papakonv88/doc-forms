@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
 interface Patient extends Document {
-    id: Number;
     name: string;
     surname: string;
     patronimo?: string;
@@ -10,7 +9,6 @@ interface Patient extends Document {
 }
 
 const NewPatientSchema = new mongoose.Schema({
-    id: {type: Number, unique: true},
     name: {type: String, required: true},
     surname: {type: String, required: true},
     patronimo: {type: String},
@@ -19,24 +17,5 @@ const NewPatientSchema = new mongoose.Schema({
     },
     imerominia_genisis: {type: Date, required: true}
 }, {timestamps: true});
-
-NewPatientSchema.pre('save', async function (next) {
-    const doc = this;
-
-    // Check if this is a new document
-    if (doc.isNew) {
-        try {
-            const highestIdDoc = await mongoose.models.NewPatient.findOne({}, {}, {sort: {id: -1}});
-
-            doc.id = highestIdDoc ? highestIdDoc.id + 1 : 1;
-
-            next();
-        } catch (error) {
-            next(error);
-        }
-    } else {
-        next();
-    }
-});
 
 export default mongoose.models.NewPatient || mongoose.model<Patient>('NewPatient', NewPatientSchema);

@@ -14,23 +14,29 @@ export interface ExamData {
 }
 
 function Exams(exams: ExamData[]) {
-    console.log(exams, 'exams')
     return (
         <>
             <PageContainer>
                 <SectionContainer>
-                    <ExamsTable exams={exams}/>
+                    <ExamsTable {...exams}/>
                 </SectionContainer>
             </PageContainer>
         </>
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-    const res = await fetch('http://localhost:3000/api/getAllExams');
-    const exams: ExamData[] = await res.json();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const { req } = context;
 
-    return { props: { exams } };
+    const protocol = req.headers['x-forwarded-proto'] || 'http';
+    const host = req.headers.host;
+
+    const baseUrl = `${protocol}://${host}`;
+
+    const { data: exams } = await axios.get(`${baseUrl}/api/getAllExams`);
+
+    return {
+        props: { exams },
+    };
 };
-
 export default Exams;
