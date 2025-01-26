@@ -29,7 +29,7 @@ function AddPatient({patient, handleValuesChange, formValues, errors, handleErro
         <SearchPatient openDialog={openDialog} handleDialog={handleDialog} getPatients={getPatients} retrievePatient={retrievePatient} />
         <Box width={'100%'} mt={5}>
             <Box display={'flex'} flexDirection={'row'} columnGap={5} alignItems={'center'}>
-                <Typography variant={'h5'}>Εισαγωγή Ασθενούς</Typography>
+                <Typography variant={'h5'}>Στοιχεία Ασθενή</Typography>
                 <Tooltip title={'Ανάκτηση στοιχείων ασθενούς'} placement={'right'} >
                     <IconButton aria-label="patch" color="primary" onClick={() => handleDialog(true)}>
                         <CloudDownloadIcon fontSize={'large'}/>

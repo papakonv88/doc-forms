@@ -4,7 +4,7 @@ export interface InputProps {
     handleChange: (val:string, prop: string) => void;
     value?: string | {radio: string; string: string;} | { value: string; units: string;};
     label: string;
-    errorMsg: string;
+    errorMsg?: string;
     validator?: string;
     radios?: any;
     title?: string;
@@ -31,4 +31,4 @@ export interface FormValuesPatient {
         radio: string;
         string: string;
     }
-};
+}

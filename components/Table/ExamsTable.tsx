@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {useRouter} from "next/router";
+import {validateAndFormatDate, validateText} from "../../utils";
 
 
 function ExamsTable({exams}: any) {
@@ -29,6 +30,10 @@ function ExamsTable({exams}: any) {
 
     const goToExam = (id) => {
         router.push(`/exams/${id}`);
+    };
+
+    const goToReport = (id) => {
+        router.push(`/report?id=${id}`);
     };
 
     // Handle search input change
@@ -75,16 +80,6 @@ function ExamsTable({exams}: any) {
         setSelectedRowId(null);
     };
 
-    // Action handlers
-    const handleViewExam = (id) => {
-        console.log("View Exam ID:", id);
-    };
-
-    const handleMakeDiagnosis = (id) => {
-        console.log("Make Diagnosis ID:", id);
-    };
-
-
     const paginatedData = filteredData.slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
@@ -105,6 +100,7 @@ function ExamsTable({exams}: any) {
                 <Table>
                     <TableHead>
                         <TableRow>
+                            <TableCell className={'table-row'}>Κωδικός Εξέτασης</TableCell>
                             <TableCell className={'table-row'}>Ημερομηνία Καταγραφής</TableCell>
                             <TableCell className={'table-row'}>Αιτία Εξέτασης</TableCell>
                             <TableCell className={'table-row'}>Όνομα Ασθενή</TableCell>
@@ -117,16 +113,13 @@ function ExamsTable({exams}: any) {
                     <TableBody>
                         {paginatedData.map((row, index) => (
                             <TableRow key={index}>
-                                <TableCell>
-                                    {new Date(row.imerominia_katagrafis).toLocaleDateString(
-                                        "el-GR"
-                                    )}
-                                </TableCell>
-                                <TableCell>{row.aitia_eksetasis.string}</TableCell>
-                                <TableCell>{row.patient.name}</TableCell>
-                                <TableCell>{row.patient.surname}</TableCell>
-                                <TableCell>{row.patient.patronimo}</TableCell>
-                                <TableCell>{row.patient.amka}</TableCell>
+                                <TableCell>{row.id}</TableCell>
+                                <TableCell>{validateAndFormatDate(row.imerominia_katagrafis)}</TableCell>
+                                <TableCell>{validateText(row.aitia_eksetasis.string)}</TableCell>
+                                <TableCell>{validateText(row.patient.name)}</TableCell>
+                                <TableCell>{validateText(row.patient.surname)}</TableCell>
+                                <TableCell>{validateText(row.patient.patronimo)}</TableCell>
+                                <TableCell>{validateText(row.patient.amka)}</TableCell>
                                 <TableCell>
                                     <IconButton
                                         aria-controls="action-menu"
@@ -142,9 +135,7 @@ function ExamsTable({exams}: any) {
                                         onClose={handleMenuClose}
                                     >
                                         <MenuItem onClick={() => goToExam(row.id)}>Εξέταση</MenuItem>
-                                        <MenuItem onClick={handleMakeDiagnosis}>
-                                           Πόρισμα
-                                        </MenuItem>
+                                        <MenuItem onClick={() => goToReport(row.id)}>Πόρισμα</MenuItem>
                                     </Menu>
                                 </TableCell>
                             </TableRow>

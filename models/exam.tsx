@@ -11,7 +11,6 @@ interface DiarkeiaKatagrafis {
 }
 
 interface Exam extends Document {
-    patientId: number;
     imerominia_katagrafis: Date;
     typos_katagrafis: string;
     parapombi: string;
@@ -31,7 +30,7 @@ interface Exam extends Document {
 }
 
 const NewExamSchema = new mongoose.Schema({
-    patientId: {type: Number, required: true},
+    id: {type: Number, unique: true},
     imerominia_katagrafis: {type: Date, required: true},
     typos_katagrafis: {type: String, required: true},
     parapombi: {type: String, required: true},
@@ -53,7 +52,26 @@ const NewExamSchema = new mongoose.Schema({
     yperpnoia_xronos: {type: String, required: true},
     yperpnoia_prospatheia: {type: String, default: '-'},
     dfe: {type: String, required: true},
-    patient: { type: mongoose.Schema.Types.ObjectId, ref: 'NewPatient', required: true }
+    patient: {type: mongoose.Schema.Types.ObjectId, ref: 'NewPatient', required: true}
 }, {timestamps: true});
+
+NewExamSchema.pre('save', async function (next) {
+    const doc = this;
+
+    // Check if this is a new document
+    if (doc.isNew) {
+        try {
+            const highestIdDoc = await mongoose.models.NewExam.findOne({}, {}, {sort: {id: -1}});
+
+            doc.id = highestIdDoc ? highestIdDoc.id + 1 : 1;
+
+            next();
+        } catch (error) {
+            next(error);
+        }
+    } else {
+        next();
+    }
+});
 
 export default mongoose.models.NewExam || mongoose.model<Exam>('NewExam', NewExamSchema);

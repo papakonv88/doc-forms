@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import * as React from "react";
 import {DialogContentText} from "@mui/material";
 
-function ConfirmationDialog({patientId, openDialog, handleClose, title, message, action}) {
+function ConfirmationDialog({mode, openDialog, handleClose, title, message, action}) {
     return (
         <Dialog
             open={openDialog}
@@ -32,7 +32,7 @@ function ConfirmationDialog({patientId, openDialog, handleClose, title, message,
                 <Button onClick={() => handleClose('cancel')}>
                     Ακυρωση
                 </Button>
-                <Button onClick={() => action(patientId)} variant={'contained'} autoFocus>
+                <Button onClick={() => action(mode)} variant={'contained'} autoFocus>
                     Επιβεβαιωση
                 </Button>
             </DialogActions>
