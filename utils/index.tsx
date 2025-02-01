@@ -8,6 +8,10 @@ export async function savePatient(payload: any) {
     return await axios.post('/api/insertPatient', payload)
 }
 
+export async function deletePatient(id: string) {
+    return await axios.get(`/api/deletePatient?id=${id}`)
+}
+
 export function validateText(text, fallback = '-') {
     return text && text.trim() ? text.trim() : fallback;
 }

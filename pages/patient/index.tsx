@@ -11,7 +11,8 @@ import PageContainer from "../../components/Containers/PageContainer";
 import {useAppContext} from "../../context";
 import ConfirmationDialog from "../../components/ConfirmationDialog/ConfirmationDialog";
 import {useErrorPayload} from "../../hooks";
-import {saveExam, savePatient} from "../../utils";
+import {deletePatient, saveExam, savePatient} from "../../utils";
+import DeleteIcon from '@mui/icons-material/Delete';
 import {useRouter} from "next/router";
 
 type ValueType = InputProps['value'];
@@ -77,6 +78,60 @@ function Patient() {
     const router = useRouter();
     const [openDialog, setOpenDialog] = useState(false);
 
+    const resetForm = () => {
+        setFormValues({
+            name: '',
+            surname: '',
+            patronimo: '',
+            amka: '',
+            imerominia_genisis: '',
+            imerominia_katagrafis: '',
+            typos_katagrafis: '',
+            parapombi: '',
+            aitia_eksetasis: {
+                radio: '',
+                string: ''
+            },
+            antispasmodiki_agogi: '',
+            alli_agogi: '',
+            kraniotomi_plagiosi: '',
+            kraniotomi_entopisi: '',
+            topothetisi_ilektrodion: '',
+            diarkeia_katagrafis: {
+                radio: '',
+                string: ''
+            },
+            epipedo_syneidisis: '',
+            synergasia: '',
+            yperpnoia_xronos: '',
+            yperpnoia_prospatheia: '',
+            dfe: ''
+        });
+
+        setErrors({
+            name: false,
+            surname: false,
+            patronimo: false,
+            amka: false,
+            imerominia_genisis: false,
+            imerominia_katagrafis: false,
+            typos_katagrafis: false,
+            parapombi: false,
+            aitia_eksetasis: false,
+            antispasmodiki_agogi: false,
+            alli_agogi: false,
+            kraniotomi_plagiosi: false,
+            kraniotomi_entopisi: false,
+            topothetisi_ilektrodion: false,
+            diarkeia_katagrafis: false,
+            epipedo_syneidisis: false,
+            synergasia: false,
+            yperpnoia_xronos: false,
+            yperpnoia_prospatheia: false,
+            dfe: false
+        });
+    };
+
     const handleDialog = (bool: boolean) => {
         setOpenDialog(bool);
     };
@@ -98,6 +153,9 @@ function Patient() {
     const retrievePatient = (info: any) => {
         let newFormValues: any = {}
         let newErrorValues: any = {}
+        if (info?._id) {
+            setPatientUId(info._id)
+        }
         for (const [key, value] of Object.entries(info)) {
             if (Object.keys(formValues).includes(key)) {
                 newFormValues[key] = value
@@ -175,6 +233,18 @@ function Patient() {
         }
     }
 
+    const handleDeletePatient = async () => {
+        try {
+            await deletePatient(patientUId)
+            handleOpenSnackbar('Επιτυχής Διαγραφή Ασθενούς', MessageVariants.SUCCESS)
+            setPatientUId('');
+            resetForm();
+            handleCloseConfirmDialog();
+        } catch (e) {
+            handleOpenSnackbar('Σφάλμα κατά την Διαγραφή Ασθενούς', MessageVariants.ERROR)
+        }
+    }
+
     const handleCloseConfirmDialog = (type: null | string = null) => {
         setDialog((prev) => ({...prev, open: false, mode: '', result: type !== 'cancel'}));
     }
@@ -244,9 +314,23 @@ function Patient() {
             await handlePatchPatient(patientUId)
         } else if (mode === 'exam') {
             await handleInsertExam();
+        } else if (mode === 'delete') {
+            await handleDeletePatient();
         } else {
             await handleInsertPatient();
         }
+    }
+
+    const handleDelete = () => {
+        handleLoader(true)
+        handleOpenConfirmDialog({
+            mode: 'delete',
+            open: true,
+            message: 'Eίστε σίγουροι ότι θέλετε να προχωρήσετε στην διαγραφή του ασθενούς;',
+            title: 'Διαγραφή',
+            result: true
+        })
+        handleLoader(false)
     }
 
     const handleExamSubmit = async () => {
@@ -302,11 +386,20 @@ function Patient() {
                 </SectionContainer>
                 {activeStep === 0 ?
                     <SectionContainer>
-                        <AddPatient patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
+                        <AddPatient key={patientUId} patient={patient} handleValuesChange={handleValuesChange} formValues={formValues}
                                     errors={errors} handleError={handleError} openDialog={openDialog}
                                     handleDialog={handleDialog} getPatients={getPatients}
                                     retrievePatient={retrievePatient}/>
-                        <Box display={'flex'} justifyContent={'end'} mb={4} mt={7}>
+                        <Box display={'flex'} columnGap={2} justifyContent={'end'} mb={4} mt={7}>
+                            <Button
+                                onClick={handleDelete}
+                                variant="contained"
+                                color="error"
+                                disabled={!Boolean(patientUId)}
+                                startIcon={<DeleteIcon/>}
+                            >
+                                Διαγραφη Ασθενη
+                            </Button>
                             <Button variant="contained" onClick={handlePatientSubmit}>
                                 Συνεχεια σε Εξεταση
                             </Button>

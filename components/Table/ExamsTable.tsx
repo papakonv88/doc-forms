@@ -152,7 +152,7 @@ function ExamsTable({exams}: any) {
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 rowsPerPageOptions={[5, 10, 25]}
-                labelRowsPerPage="Rows per page"
+                labelRowsPerPage="Εγγραφές ανά σελίδα"
             />
         </div>
     );
