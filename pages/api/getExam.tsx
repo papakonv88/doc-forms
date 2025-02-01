@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         case 'GET':
             // @ts-ignore
             const { id } = req.query
-            const exam = await Exam.findOne({ id }).populate('patient')
+            const exam = await Exam.findOne({ examId: id }).populate('patient')
             res.status(200).json(exam);
             break;
         default:

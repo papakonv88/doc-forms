@@ -113,7 +113,7 @@ function ExamsTable({exams}: any) {
                     <TableBody>
                         {paginatedData.map((row, index) => (
                             <TableRow key={index}>
-                                <TableCell>{row.id}</TableCell>
+                                <TableCell>{row.examId}</TableCell>
                                 <TableCell>{validateAndFormatDate(row.imerominia_katagrafis)}</TableCell>
                                 <TableCell>{validateText(row.aitia_eksetasis.string)}</TableCell>
                                 <TableCell>{validateText(row.patient.name)}</TableCell>
@@ -134,8 +134,8 @@ function ExamsTable({exams}: any) {
                                         open={Boolean(anchorEl) && selectedRowId === row._id}
                                         onClose={handleMenuClose}
                                     >
-                                        <MenuItem onClick={() => goToExam(row.id)}>Εξέταση</MenuItem>
-                                        <MenuItem onClick={() => goToReport(row.id)}>Πόρισμα</MenuItem>
+                                        <MenuItem onClick={() => goToExam(row.examId)}>Εξέταση</MenuItem>
+                                        <MenuItem onClick={() => goToReport(row.examId)}>Πόρισμα</MenuItem>
                                     </Menu>
                                 </TableCell>
                             </TableRow>

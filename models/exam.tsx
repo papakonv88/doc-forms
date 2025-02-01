@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+const AutoIncrement = require('mongoose-sequence')(mongoose);
+
 interface AitiaEksetasis {
     radio?: string;
     string?: string;
@@ -30,7 +32,6 @@ interface Exam extends Document {
 }
 
 const NewExamSchema = new mongoose.Schema({
-    id: {type: Number, unique: true},
     imerominia_katagrafis: {type: Date, required: true},
     typos_katagrafis: {type: String, required: true},
     parapombi: {type: String, required: true},
@@ -55,23 +56,8 @@ const NewExamSchema = new mongoose.Schema({
     patient: {type: mongoose.Schema.Types.ObjectId, ref: 'NewPatient', required: true}
 }, {timestamps: true});
 
-NewExamSchema.pre('save', async function (next) {
-    const doc = this;
-
-    // Check if this is a new document
-    if (doc.isNew) {
-        try {
-            const highestIdDoc = await mongoose.models.NewExam.findOne({}, {}, {sort: {id: -1}});
-
-            doc.id = highestIdDoc ? highestIdDoc.id + 1 : 1;
-
-            next();
-        } catch (error) {
-            next(error);
-        }
-    } else {
-        next();
-    }
-});
+if(!mongoose.models.NewExam){
+    NewExamSchema.plugin(AutoIncrement,{inc_field:'examId'});
+}
 
 export default mongoose.models.NewExam || mongoose.model<Exam>('NewExam', NewExamSchema);
