@@ -7,10 +7,9 @@ function Home(exams: ExamData[]) {
         <>
             <PageContainer>
                 <SectionContainer>
-                    <h1>Welcome to MyApp</h1>
+                    <h1>Πρόγραμμα Πορίσματος</h1>
                     <p>
-                        This is the homepage of your Next.js app. You can customize this content
-                        as needed.
+                       Καλωσήρθατε στο Πρόγραμμα Πορίσματος
                     </p>
                 </SectionContainer>
             </PageContainer>

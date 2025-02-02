@@ -2,141 +2,156 @@
 
 import { useState } from "react";
 import {
+    Box,
     Button,
     Container,
+    Divider,
+    FormControlLabel,
     Menu,
     MenuItem,
     Paper,
-    Stepper,
+    Radio,
+    RadioGroup,
     Step,
     StepLabel,
+    Stepper,
     TextField,
     Typography,
-    Box,
 } from "@mui/material";
 import {
+    Check as CheckIcon,
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon,
-    Check as CheckIcon,
 } from "@mui/icons-material";
 import PageContainer from "../../components/Containers/PageContainer";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
+import { validateText } from "../../utils";
 
 const stories = [
     {
         id: 1,
-        text: "<name> went <activity> at the <location> in the <time>. It was their favorite way to spend time outdoors and stay active.",
-        placeholders: {
-            name: ["John", "Jane", "Alex", "Sarah"],
-            activity: ["running", "swimming", "cycling", "hiking"],
-            location: ["park", "beach", "mountains", "gym"],
-            time: ["morning", "afternoon", "evening", "night"],
-        }
+        title: "Γενική περιγραφή",
+        texts: [
+            "Το διάγραμμα έχει καλή οργάνωση.",
+            "Το διάγραμμα είναι δύσκολο να διαβαστεί.",
+            "Το διάγραμμα δεν περιλαμβάνει αρκετά στοιχεία.",
+        ],
+        placeholders: null, // No placeholders needed in this example
     },
     {
         id: 2,
-        text: "Last weekend, <name> decided to try <activity> with friends at the <location>. The <time> weather was perfect for it.",
+        title: "Οπίσθιες δραστηριότητες",
+        texts: [
+            "Last weekend, <name> decided to try <activity> with friends at the <location>. The <time> weather was perfect for it.",
+            "<name> loves spending time doing <activity> at the <location>.",
+            "The <time> was ideal for <name> to engage in <activity> at the <location>.",
+        ],
         placeholders: {
             name: ["John", "Jane", "Alex", "Sarah"],
             activity: ["painting", "photography", "meditation", "yoga"],
             location: ["studio", "garden", "rooftop", "park"],
             time: ["spring", "summer", "autumn", "winter"],
-        }
+        },
     },
-    // Add more stories here...
 ];
 
 function StoryBuilder() {
     const [activeStep, setActiveStep] = useState(0);
+    const [selectedStoryTexts, setSelectedStoryTexts] = useState<string[]>(stories.map(() => ""));
     const [useCustomText, setUseCustomText] = useState(false);
     const [customTexts, setCustomTexts] = useState(stories.map(() => ""));
-    const [selections, setSelections] = useState(
-        stories.map(story => {
-            const initialValues: Record<string, string> = {};
-            Object.entries(story.placeholders).forEach(([key, values]) => {
-                initialValues[key] = values[0];
-            });
-            return initialValues;
-        })
-    );
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [activePlaceholder, setActivePlaceholder] = useState<{field: string, storyIndex: number} | null>(null);
 
     const router = useRouter();
     const { query } = router;
 
-    const handleClick = (event: React.MouseEvent<HTMLElement>, field: string, storyIndex: number) => {
-        setAnchorEl(event.currentTarget);
-        setActivePlaceholder({ field, storyIndex });
+    // Handle selection of a text option within a story
+    const handleStoryTextSelection = (event: React.ChangeEvent<HTMLInputElement>, storyIndex: number) => {
+        const selectedTextIndex = Number(event.target.value);
+        setSelectedStoryTexts(prev => {
+            const newTexts = [...prev];
+            newTexts[storyIndex] = stories[storyIndex].texts[selectedTextIndex]; // Store selected text
+            return newTexts;
+        });
     };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-        setActivePlaceholder(null);
+    // Toggle between template selection and custom text mode
+    const handleCustomTextToggle = () => {
+        setUseCustomText(prev => {
+            const newState = !prev;
+            if (newState) {
+                setSelectedStoryTexts(prev => {
+                    const newTexts = [...prev];
+                    newTexts[activeStep] = ""; // Clear selection when switching to custom
+                    return newTexts;
+                });
+                setCustomTexts(prev => {
+                    const newTexts = [...prev];
+                    newTexts[activeStep] = ""; // Clear custom text
+                    return newTexts;
+                });
+            }
+            return newState;
+        });
     };
 
-    const handleOptionSelect = (option: string) => {
-        if (activePlaceholder) {
-            setSelections(prev => {
-                const newSelections = [...prev];
-                newSelections[activePlaceholder.storyIndex] = {
-                    ...newSelections[activePlaceholder.storyIndex],
-                    [activePlaceholder.field]: option,
-                };
-                return newSelections;
-            });
-            handleClose();
-        }
-    };
-
+    // Handle custom text input
     const handleCustomTextChange = (text: string) => {
         setCustomTexts(prev => {
             const newTexts = [...prev];
             newTexts[activeStep] = text;
             return newTexts;
         });
+
+        setSelectedStoryTexts(prev => {
+            const newTexts = [...prev];
+            newTexts[activeStep] = text; // Save custom text as selected
+            return newTexts;
+        });
     };
 
-    const renderStoryText = (text: string, placeholders: Record<string, string[]>, storyIndex: number) => {
-        let parts = text.split(/(<\w+>)/);
+    // Render story text selection (radio buttons)
+    const renderStoryTextSelection = (storyIndex: number) => {
         return (
-            <Typography variant="body1" sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center' }}>
-                {parts.map((part, index) => {
-                    const match = part.match(/<(\w+)>/);
-                    if (match) {
-                        const field = match[1];
-                        return (
-                            <Button
-                                key={index}
-                                variant="outlined"
-                                size="small"
-                                onClick={(e) => handleClick(e, field, storyIndex)}
-                                sx={{
-                                    textTransform: 'none',
-                                    borderStyle: 'dashed',
-                                    minWidth: 'auto',
-                                    px: 1,
-                                    py: 0.5
-                                }}
-                            >
-                                {selections[storyIndex][field]}
-                            </Button>
-                        );
-                    }
-                    return part;
-                })}
-            </Typography>
+            <RadioGroup
+                value={stories[storyIndex].texts.indexOf(selectedStoryTexts[storyIndex])}
+                onChange={(e) => handleStoryTextSelection(e, storyIndex)}
+            >
+                {stories[storyIndex].texts.map((text, textIndex) => (
+                    <FormControlLabel
+                        key={textIndex}
+                        value={textIndex}
+                        control={<Radio />}
+                        label={text}
+                    />
+                ))}
+            </RadioGroup>
         );
     };
 
     return (
         <Container maxWidth="md" sx={{ py: 8 }}>
-            <Box sx={{ textAlign: 'center', mb: 6 }}>
+            <Box sx={{ textAlign: "center", mb: 6 }}>
                 <Typography variant="h4" component="h1" gutterBottom>
-                    Έκδοση πορίσματος για την εξέταση με κωδικό: { query?.id }
+                    Έκδοση πορίσματος για την εξέταση με κωδικό:{" "}
+                    <Typography
+                        sx={{
+                            cursor: "pointer",
+                            display: "inline",
+                            fontWeight: "bold",
+                            fontSize: "inherit",
+                            color: "text.primary",
+                            transition: "color 0.2s ease-in-out",
+                            "&:hover": {
+                                color: "primary.main",
+                            },
+                        }}
+                        onClick={() => window.open(`/exams/${query?.id}`, "_blank")}
+                    >
+                        {validateText(query?.id)}
+                    </Typography>
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary">
-                    Step {activeStep + 1} of {stories.length}
+                    Βήμα {activeStep + 1} από {stories.length}
                 </Typography>
             </Box>
 
@@ -148,13 +163,14 @@ function StoryBuilder() {
                 ))}
             </Stepper>
 
+            <Typography sx={{ marginBottom: 3 }} variant="h5">
+                {`${activeStep + 1}. ${stories[activeStep].title}`}
+            </Typography>
+
             <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
-                    <Button
-                        variant="outlined"
-                        onClick={() => setUseCustomText(!useCustomText)}
-                    >
-                        {useCustomText ? "Use Template" : "Write Custom"}
+                <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
+                    <Button variant="outlined" onClick={handleCustomTextToggle}>
+                        {useCustomText ? "Επιλογές" : "Ελεύθερο Κείμενο"}
                     </Button>
                 </Box>
 
@@ -165,36 +181,39 @@ function StoryBuilder() {
                         rows={4}
                         value={customTexts[activeStep]}
                         onChange={(e) => handleCustomTextChange(e.target.value)}
-                        placeholder={`Write your own story for step ${activeStep + 1}...`}
+                        placeholder={`Γράψτε το κείμενό σας εδώ...`}
                     />
                 ) : (
-                    <Box sx={{ typography: 'body1' }}>
-                        {renderStoryText(
-                            stories[activeStep].text,
-                            stories[activeStep].placeholders,
-                            activeStep
-                        )}
-                    </Box>
+                    <Box sx={{ typography: "body1" }}>{renderStoryTextSelection(activeStep)}</Box>
                 )}
+
+                <Divider sx={{ padding: "10px 0" }} />
+                <Typography variant="body1" sx={{ mt: 1, whiteSpace: "pre-line", fontWeight: "bold" }}>
+                    Επιλεγμένο κείμενο: {selectedStoryTexts[activeStep] || "Δεν έχετε κάνει κάποια επιλογή"}
+                </Typography>
             </Paper>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Button
                     variant="outlined"
-                    onClick={() => setActiveStep((prev) => prev - 1)}
+                    onClick={() => {
+                        setActiveStep((prev) => prev - 1);
+                        setUseCustomText(false);
+                    }}
                     disabled={activeStep === 0}
                     startIcon={<ChevronLeftIcon />}
                 >
-                    Previous
+                    Προηγούμενο
                 </Button>
                 <Button
                     variant="contained"
                     onClick={() => {
                         if (activeStep < stories.length - 1) {
                             setActiveStep((prev) => prev + 1);
+                            setUseCustomText(false);
                         } else {
-                            console.log("Final submissions:", {
-                                templates: selections,
+                            console.log("Final selections:", {
+                                selectedStoryTexts,
                                 customTexts,
                                 useCustomText,
                             });
@@ -202,25 +221,9 @@ function StoryBuilder() {
                     }}
                     endIcon={activeStep === stories.length - 1 ? <CheckIcon /> : <ChevronRightIcon />}
                 >
-                    {activeStep === stories.length - 1 ? "Submit" : "Next"}
+                    {activeStep === stories.length - 1 ? "Καταχώρηση" : "Επόμενο"}
                 </Button>
             </Box>
-
-            <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-            >
-                {activePlaceholder && stories[activePlaceholder.storyIndex].placeholders[activePlaceholder.field].map((option) => (
-                    <MenuItem
-                        key={option}
-                        onClick={() => handleOptionSelect(option)}
-                        selected={selections[activePlaceholder.storyIndex][activePlaceholder.field] === option}
-                    >
-                        {option}
-                    </MenuItem>
-                ))}
-            </Menu>
         </Container>
     );
 }
