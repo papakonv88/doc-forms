@@ -72,7 +72,7 @@ function TextWithPlaceholders({ text, textIndex, placeholders, values, onChange 
                     const options = placeholders[key];
                     if (options) {
                         return (
-                            <FormControl key={index} size="small" sx={{ minWidth: 100 }}>
+                            <FormControl key={index} size="small" sx={{ minWidth: 100, gap: 1 }}>
                                 <Select
                                     value={textValues[key] || ""}
                                     onChange={(e) => onChange(textIndex, key, e.target.value)}
@@ -169,7 +169,9 @@ export default function StoryBuilder() {
                             )
                         }
                         sx={{
-                            alignItems: 'flex-start',
+                            padding: 2,
+                            alignItems: 'center',
+                            columnGap: 2,
                             '.MuiFormControlLabel-label': {
                                 pt: 1
                             }
