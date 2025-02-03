@@ -22,6 +22,8 @@ import {
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon,
 } from "@mui/icons-material";
+import {validateText} from "../../utils";
+import {useRouter} from "next/router";
 
 const stories = [
     {
@@ -105,6 +107,9 @@ export default function StoryBuilder() {
     const [placeholderValues, setPlaceholderValues] = useState<Record<number, Record<string, string>>>({});
 
     const currentStory = stories[activeStep];
+
+    const router = useRouter();
+    const { query } = router;
 
     const handleStoryTextSelection = (event: React.ChangeEvent<HTMLInputElement>, storyIndex: number) => {
         const selectedTextIndex = Number(event.target.value);
@@ -200,11 +205,27 @@ export default function StoryBuilder() {
     return (
         <Container maxWidth="md" sx={{ py: 8 }}>
             <Box sx={{ textAlign: "center", mb: 6 }}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Story Builder
+                <Typography variant="h6" gutterBottom>
+                    Έκδοση πορίσματος για την εξέταση με κωδικό:{" "}
+                    <Typography
+                        sx={{
+                            cursor: "pointer",
+                            display: "inline",
+                            fontWeight: "bold",
+                            fontSize: "inherit",
+                            color: "text.primary",
+                            transition: "color 0.2s ease-in-out",
+                            "&:hover": {
+                                color: "primary.main",
+                            },
+                        }}
+                        onClick={() => window.open(`/exams/${query?.id}`, "_blank")}
+                    >
+                        {validateText(query?.id)}
+                    </Typography>
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary">
-                    Step {activeStep + 1} of {stories.length}
+                    Βήμα {activeStep + 1} από {stories.length}
                 </Typography>
             </Box>
 
@@ -216,14 +237,14 @@ export default function StoryBuilder() {
                 ))}
             </Stepper>
 
-            <Typography variant="h5" sx={{ mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 3 }}>
                 {`${activeStep + 1}. ${currentStory.title}`}
             </Typography>
 
             <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
                 <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
                     <Button variant="outlined" onClick={handleCustomTextToggle}>
-                        {useCustomText ? "Use Template" : "Custom Text"}
+                        {useCustomText ? "Επιλογες" : "Ελευθερο Κειμενο"}
                     </Button>
                 </Box>
 
@@ -244,10 +265,10 @@ export default function StoryBuilder() {
 
                 <Divider sx={{ my: 3 }} />
                 <Typography variant="subtitle1" sx={{ fontWeight: "medium" }}>
-                    Selected Text:
+                    Επιλεγμένο κείμενο:
                 </Typography>
                 <Typography sx={{ mt: 1, whiteSpace: "pre-line" }}>
-                    {getProcessedText(selectedStoryTexts[activeStep]) || "No selection made"}
+                    {getProcessedText(selectedStoryTexts[activeStep]) || "-"}
                 </Typography>
             </Paper>
 
@@ -261,7 +282,7 @@ export default function StoryBuilder() {
                     disabled={activeStep === 0}
                     startIcon={<ChevronLeftIcon />}
                 >
-                    Previous
+                    Προηγουμενο
                 </Button>
                 <Button
                     variant="contained"
@@ -280,7 +301,7 @@ export default function StoryBuilder() {
                     }}
                     endIcon={activeStep === stories.length - 1 ? <CheckIcon /> : <ChevronRightIcon />}
                 >
-                    {activeStep === stories.length - 1 ? "Submit" : "Next"}
+                    {activeStep === stories.length - 1 ? "Υποβολη" : "Επομενο"}
                 </Button>
             </Box>
         </Container>
