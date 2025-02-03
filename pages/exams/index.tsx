@@ -33,10 +33,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const baseUrl = `${protocol}://${host}`;
 
-    const { data: exams } = await axios.get(`${baseUrl}/api/getAllExams`);
+    try {
+        const { data: exams } = await axios.get(`${baseUrl}/api/getAllExams`);
 
-    return {
-        props: { exams },
-    };
+        return {
+            props: { exams },
+        };
+    } catch (e) {
+        return {
+            props: { exams: [] },
+        };
+    }
 };
 export default Exams;

@@ -1,17 +1,16 @@
-"use client";
-
 import { useState } from "react";
 import {
     Box,
     Button,
     Container,
     Divider,
+    FormControl,
     FormControlLabel,
-    Menu,
     MenuItem,
     Paper,
     Radio,
     RadioGroup,
+    Select,
     Step,
     StepLabel,
     Stepper,
@@ -23,9 +22,6 @@ import {
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon,
 } from "@mui/icons-material";
-import PageContainer from "../../components/Containers/PageContainer";
-import { useRouter } from "next/router";
-import { validateText } from "../../utils";
 
 const stories = [
     {
@@ -36,7 +32,7 @@ const stories = [
             "Το διάγραμμα είναι δύσκολο να διαβαστεί.",
             "Το διάγραμμα δεν περιλαμβάνει αρκετά στοιχεία.",
         ],
-        placeholders: null, // No placeholders needed in this example
+        placeholders: null,
     },
     {
         id: 2,
@@ -55,103 +51,158 @@ const stories = [
     },
 ];
 
-function StoryBuilder() {
+interface TextWithPlaceholdersProps {
+    text: string;
+    textIndex: number;
+    placeholders: Record<string, string[]>;
+    values: Record<string, Record<string, string>>;
+    onChange: (textIndex: number, key: string, value: string) => void;
+}
+
+function TextWithPlaceholders({ text, textIndex, placeholders, values, onChange }: TextWithPlaceholdersProps) {
+    const parts = text.split(/(<[^>]+>)/);
+    const textValues = values[textIndex] || {};
+
+    return (
+        <Box sx={{ display: 'inline-flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+            {parts.map((part, index) => {
+                const match = part.match(/<([^>]+)>/);
+                if (match) {
+                    const key = match[1];
+                    const options = placeholders[key];
+                    if (options) {
+                        return (
+                            <FormControl key={index} size="small" sx={{ minWidth: 100 }}>
+                                <Select
+                                    value={textValues[key] || ""}
+                                    onChange={(e) => onChange(textIndex, key, e.target.value)}
+                                    displayEmpty
+                                >
+                                    <MenuItem value="">Select {key}</MenuItem>
+                                    {options.map((option) => (
+                                        <MenuItem key={option} value={option}>
+                                            {option}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        );
+                    }
+                }
+                return <span key={index}>{part}</span>;
+            })}
+        </Box>
+    );
+}
+
+export default function StoryBuilder() {
     const [activeStep, setActiveStep] = useState(0);
-    const [selectedStoryTexts, setSelectedStoryTexts] = useState<string[]>(stories.map(() => ""));
+    const [selectedStoryTexts, setSelectedStoryTexts] = useState<string[]>(
+        stories.map(() => "")
+    );
     const [useCustomText, setUseCustomText] = useState(false);
     const [customTexts, setCustomTexts] = useState(stories.map(() => ""));
+    const [placeholderValues, setPlaceholderValues] = useState<Record<number, Record<string, string>>>({});
 
-    const router = useRouter();
-    const { query } = router;
+    const currentStory = stories[activeStep];
 
-    // Handle selection of a text option within a story
     const handleStoryTextSelection = (event: React.ChangeEvent<HTMLInputElement>, storyIndex: number) => {
         const selectedTextIndex = Number(event.target.value);
-        setSelectedStoryTexts(prev => {
+        setSelectedStoryTexts((prev) => {
             const newTexts = [...prev];
-            newTexts[storyIndex] = stories[storyIndex].texts[selectedTextIndex]; // Store selected text
+            newTexts[storyIndex] = stories[storyIndex].texts[selectedTextIndex];
             return newTexts;
         });
     };
 
-    // Toggle between template selection and custom text mode
     const handleCustomTextToggle = () => {
-        setUseCustomText(prev => {
-            const newState = !prev;
-            if (newState) {
-                setSelectedStoryTexts(prev => {
-                    const newTexts = [...prev];
-                    newTexts[activeStep] = ""; // Clear selection when switching to custom
-                    return newTexts;
-                });
-                setCustomTexts(prev => {
-                    const newTexts = [...prev];
-                    newTexts[activeStep] = ""; // Clear custom text
-                    return newTexts;
-                });
-            }
-            return newState;
-        });
+        setUseCustomText((prev) => !prev);
     };
 
-    // Handle custom text input
     const handleCustomTextChange = (text: string) => {
-        setCustomTexts(prev => {
+        setCustomTexts((prev) => {
             const newTexts = [...prev];
             newTexts[activeStep] = text;
             return newTexts;
         });
 
-        setSelectedStoryTexts(prev => {
+        setSelectedStoryTexts((prev) => {
             const newTexts = [...prev];
-            newTexts[activeStep] = text; // Save custom text as selected
+            newTexts[activeStep] = text;
             return newTexts;
         });
     };
 
-    // Render story text selection (radio buttons)
+    const handlePlaceholderChange = (textIndex: number, key: string, value: string) => {
+        setPlaceholderValues(prev => ({
+            ...prev,
+            [textIndex]: {
+                ...(prev[textIndex] || {}),
+                [key]: value
+            }
+        }));
+    };
+
     const renderStoryTextSelection = (storyIndex: number) => {
+        const story = stories[storyIndex];
         return (
             <RadioGroup
                 value={stories[storyIndex].texts.indexOf(selectedStoryTexts[storyIndex])}
                 onChange={(e) => handleStoryTextSelection(e, storyIndex)}
             >
-                {stories[storyIndex].texts.map((text, textIndex) => (
+                {story.texts.map((text, textIndex) => (
                     <FormControlLabel
                         key={textIndex}
                         value={textIndex}
                         control={<Radio />}
-                        label={text}
+                        label={
+                            story.placeholders ? (
+                                <TextWithPlaceholders
+                                    text={text}
+                                    textIndex={textIndex}
+                                    placeholders={story.placeholders}
+                                    values={placeholderValues}
+                                    onChange={handlePlaceholderChange}
+                                />
+                            ) : (
+                                text
+                            )
+                        }
+                        sx={{
+                            alignItems: 'flex-start',
+                            '.MuiFormControlLabel-label': {
+                                pt: 1
+                            }
+                        }}
                     />
                 ))}
             </RadioGroup>
         );
     };
 
+    const getProcessedText = (text: string) => {
+        if (!currentStory.placeholders) return text;
+
+        const selectedTextIndex = stories[activeStep].texts.indexOf(text);
+        const textValues = placeholderValues[selectedTextIndex] || {};
+
+        let processedText = text;
+        Object.entries(currentStory.placeholders).forEach(([key, _]) => {
+            const placeholder = `<${key}>`;
+            const value = textValues[key] || placeholder;
+            processedText = processedText.replace(placeholder, value);
+        });
+        return processedText;
+    };
+
     return (
         <Container maxWidth="md" sx={{ py: 8 }}>
             <Box sx={{ textAlign: "center", mb: 6 }}>
                 <Typography variant="h4" component="h1" gutterBottom>
-                    Έκδοση πορίσματος για την εξέταση με κωδικό:{" "}
-                    <Typography
-                        sx={{
-                            cursor: "pointer",
-                            display: "inline",
-                            fontWeight: "bold",
-                            fontSize: "inherit",
-                            color: "text.primary",
-                            transition: "color 0.2s ease-in-out",
-                            "&:hover": {
-                                color: "primary.main",
-                            },
-                        }}
-                        onClick={() => window.open(`/exams/${query?.id}`, "_blank")}
-                    >
-                        {validateText(query?.id)}
-                    </Typography>
+                    Story Builder
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary">
-                    Βήμα {activeStep + 1} από {stories.length}
+                    Step {activeStep + 1} of {stories.length}
                 </Typography>
             </Box>
 
@@ -163,14 +214,14 @@ function StoryBuilder() {
                 ))}
             </Stepper>
 
-            <Typography sx={{ marginBottom: 3 }} variant="h5">
-                {`${activeStep + 1}. ${stories[activeStep].title}`}
+            <Typography variant="h5" sx={{ mb: 3 }}>
+                {`${activeStep + 1}. ${currentStory.title}`}
             </Typography>
 
             <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
                 <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
                     <Button variant="outlined" onClick={handleCustomTextToggle}>
-                        {useCustomText ? "Επιλογές" : "Ελεύθερο Κείμενο"}
+                        {useCustomText ? "Use Template" : "Custom Text"}
                     </Button>
                 </Box>
 
@@ -181,15 +232,20 @@ function StoryBuilder() {
                         rows={4}
                         value={customTexts[activeStep]}
                         onChange={(e) => handleCustomTextChange(e.target.value)}
-                        placeholder={`Γράψτε το κείμενό σας εδώ...`}
+                        placeholder="Write your text here..."
                     />
                 ) : (
-                    <Box sx={{ typography: "body1" }}>{renderStoryTextSelection(activeStep)}</Box>
+                    <Box>
+                        {renderStoryTextSelection(activeStep)}
+                    </Box>
                 )}
 
-                <Divider sx={{ padding: "10px 0" }} />
-                <Typography variant="body1" sx={{ mt: 1, whiteSpace: "pre-line", fontWeight: "bold" }}>
-                    Επιλεγμένο κείμενο: {selectedStoryTexts[activeStep] || "Δεν έχετε κάνει κάποια επιλογή"}
+                <Divider sx={{ my: 3 }} />
+                <Typography variant="subtitle1" sx={{ fontWeight: "medium" }}>
+                    Selected Text:
+                </Typography>
+                <Typography sx={{ mt: 1, whiteSpace: "pre-line" }}>
+                    {getProcessedText(selectedStoryTexts[activeStep]) || "No selection made"}
                 </Typography>
             </Paper>
 
@@ -203,7 +259,7 @@ function StoryBuilder() {
                     disabled={activeStep === 0}
                     startIcon={<ChevronLeftIcon />}
                 >
-                    Προηγούμενο
+                    Previous
                 </Button>
                 <Button
                     variant="contained"
@@ -216,22 +272,15 @@ function StoryBuilder() {
                                 selectedStoryTexts,
                                 customTexts,
                                 useCustomText,
+                                placeholderValues,
                             });
                         }
                     }}
                     endIcon={activeStep === stories.length - 1 ? <CheckIcon /> : <ChevronRightIcon />}
                 >
-                    {activeStep === stories.length - 1 ? "Καταχώρηση" : "Επόμενο"}
+                    {activeStep === stories.length - 1 ? "Submit" : "Next"}
                 </Button>
             </Box>
         </Container>
-    );
-}
-
-export default function Page() {
-    return (
-        <PageContainer>
-            <StoryBuilder />
-        </PageContainer>
     );
 }
