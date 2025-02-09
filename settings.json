@@ -7,7 +7,7 @@
         "label": "Ονομα Ασθενούς",
         "type": "free",
         "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*",
+        "validator": "^.+$",
         "required": true
       },
       {
@@ -16,7 +16,7 @@
         "label": "Επώνυμο Ασθενούς",
         "type": "free",
         "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^[A-Za-z]+([ '-][A-Za-z]+)*",
+        "validator": "^.+$",
         "required": true
       },
       {
