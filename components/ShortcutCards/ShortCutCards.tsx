@@ -4,12 +4,14 @@ import {useRouter} from "next/router";
 
 const buttons = [
     {
+        id: 1,
         title: 'Λίστα Εξετάσεων',
         description: 'Πλοηγηθείτε στη σελίδα με την συνολική λίστα των εξετάσεων',
         buttonText: 'Εξετασεις',
         path: 'exams'
     },
     {
+        id: 2,
         title: 'Νέα Εξέταση',
         description: 'Πλοηγηθείτε στη σελίδα για να καταχωρήσετε τα στοιχεία ασθενή και της εξέτασης',
         buttonText: 'Νεα Εξεταση',
@@ -25,7 +27,7 @@ const ShortcutCards = () => {
     return (
         <Box mt={7} display={'flex'} columnGap={4}>
             {buttons.map((item) => (
-                <Card sx={{ minWidth: 275, maxWidth: 375 }}>
+                <Card key={`${item.id}_card`} sx={{ minWidth: 275, maxWidth: 375 }}>
                     <CardContent>
                         <Typography sx={{ color: 'text.secondary', mb: 1.5 }} variant="h5" component="div">
                             {item.title}
