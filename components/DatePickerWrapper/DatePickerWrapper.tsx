@@ -34,7 +34,7 @@ function DatePickerWrapper({property, handleChange, value, label, error, handleE
                     sx={{ width: '350px' }}
                     disableFuture={true}
                     label={label}
-                    value={value ? dayjs(value) : null}
+                    value={value ? dayjs(value as string | null) : null}
                     onChange={(newValue) => handleDateChange(newValue)}
                     slotProps={{
                         field: { clearable: true, onClear: () => setCleared(true)},
