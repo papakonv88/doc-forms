@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, {ObjectId} from 'mongoose';
 
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
@@ -13,6 +13,7 @@ interface DiarkeiaKatagrafis {
 }
 
 interface Exam extends Document {
+    _id: ObjectId;
     imerominia_katagrafis: Date;
     typos_katagrafis: string;
     parapombi: string;
@@ -28,6 +29,7 @@ interface Exam extends Document {
     yperpnoia_xronos: string;
     yperpnoia_prospatheia: string;
     dfe: string;
+    examId?: Number | String;
     patient: mongoose.Schema.Types.ObjectId;
 }
 
@@ -53,6 +55,7 @@ const NewExamSchema = new mongoose.Schema({
     yperpnoia_xronos: {type: String, required: true},
     yperpnoia_prospatheia: {type: String, default: '-'},
     dfe: {type: String, required: true},
+    examId: {type: Number, required: true},
     patient: {type: mongoose.Schema.Types.ObjectId, ref: 'NewPatient', required: true}
 }, {timestamps: true});
 

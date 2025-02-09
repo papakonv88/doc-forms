@@ -4,8 +4,8 @@ import Exam from "../../models/exam";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
         case 'GET':
-            // @ts-ignore
             const { id } = req.query
+            // @ts-ignore
             const exam = await Exam.findOne({ examId: id }).populate('patient')
             res.status(200).json(exam);
             break;
