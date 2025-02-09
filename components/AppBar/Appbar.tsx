@@ -1,5 +1,6 @@
 import {AppBar, Toolbar, Typography, Box, Button} from "@mui/material";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
+import VaccinesIcon from '@mui/icons-material/Vaccines';
 
 function Appbar() {
     const router = useRouter();
@@ -10,28 +11,28 @@ function Appbar() {
         <>
             <AppBar position="fixed">
                 <Toolbar>
-
-                    {/* Title */}
-                    <Typography
+                    {/*<Typography
                         variant="h6"
                         sx={{ flexGrow: 1, cursor: "pointer" }}
                         onClick={() => handleNavigation("/")}
                     >
                         MyApp
-                    </Typography>
+                    </Typography>*/}
 
+                    <VaccinesIcon sx={{cursor: "pointer", fontSize: '1.8rem'}} onClick={() => handleNavigation("/")}/>
+                    <Box flex={1}/>
                     <Box display={'flex'} columnGap={2}>
                         <Button
                             color="inherit"
                             onClick={() => handleNavigation("/exams")}
-                            sx={{ textTransform: "none" }}
+                            sx={{textTransform: "none"}}
                         >
                             Εξετάσεις
                         </Button>
                         <Button
                             color="inherit"
                             onClick={() => handleNavigation("/patient")}
-                            sx={{ textTransform: "none" }}
+                            sx={{textTransform: "none"}}
                         >
                             Νέα Εξέταση
                         </Button>

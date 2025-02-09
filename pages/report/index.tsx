@@ -1,11 +1,11 @@
-import { useState } from "react";
+import {useState} from "react";
 import {
     Box,
     Button,
     Container,
     Divider,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, InputLabel,
     MenuItem,
     Paper,
     Radio,
@@ -40,15 +40,15 @@ const stories = [
         id: 2,
         title: "Οπίσθιες δραστηριότητες",
         texts: [
-            "Last weekend, <name> decided to try <activity> with friends at the <location>. The <time> weather was perfect for it.",
-            "<name> loves spending time doing <activity> at the <location>.",
-            "The <time> was ideal for <name> to engage in <activity> at the <location>.",
+            "Το ΗΕΓ εγρήγορσης χαρακτηρίζεται από <option1>, <option2>, <option3> ρυθμό άλφα, συχνότητας <option4> με εντόπιση στις <option5> (πχ ινιακές) περιοχές και με <option6>.",
         ],
         placeholders: {
-            name: ["John", "Jane", "Alex", "Sarah"],
-            activity: ["painting", "photography", "meditation", "yoga"],
-            location: ["studio", "garden", "rooftop", "park"],
-            time: ["spring", "summer", "autumn", "winter"],
+            option1: ['συμμετρικό, ημιτονοειδή', 'συμμετρικό', 'μέτρια ασύμμετρο (σταθερή ασυμμετρία εύρους δυναμικού <50% ή συχνότητας από 0.5Hz – 1Hz) υπέρ της (ΔΕ ή ΑΡ) πλευράς', 'ασύμμετρο (≥50% εύρους δυναμικού ή συχνότητας >1 Hz) υπέρ της ΔΕ ή ΑΡ πλευράς', 'κενό'],
+            option2: ["σταθερό", "ασταθή"],
+            option3: ["ρυθμό άλφα", "οπίσθιο επικρατητικό ρυθμό"],
+            option4: ["αριθμό σε μπάρα από 3 – 12 και >12"],
+            option5: ["ινιακές, ινιακές και βρεγματικές, ινιακές και οπίσθιες κροταφικές, οπίσθιες απαγωγές"],
+            option6: ["καλή αντίδραση αποκλεισμού", "χωρίς αντίδραση αποκλεισμού", "ασύμμετρη αντίδραση αποκλεισμού υπέρ της ΔΕ ή ΑΡ πλευράς"],
         },
     },
 ];
@@ -61,12 +61,12 @@ interface TextWithPlaceholdersProps {
     onChange: (textIndex: number, key: string, value: string) => void;
 }
 
-function TextWithPlaceholders({ text, textIndex, placeholders, values, onChange }: TextWithPlaceholdersProps) {
+function TextWithPlaceholders({text, textIndex, placeholders, values, onChange}: TextWithPlaceholdersProps) {
     const parts = text.split(/(<[^>]+>)/);
     const textValues = values[textIndex] || {};
 
     return (
-        <Box sx={{ display: 'inline-flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+        <Box sx={{display: 'inline-flex', flexWrap: 'wrap', alignItems: 'center', gap: 1}}>
             {parts.map((part, index) => {
                 const match = part.match(/<([^>]+)>/);
                 if (match) {
@@ -74,13 +74,18 @@ function TextWithPlaceholders({ text, textIndex, placeholders, values, onChange 
                     const options = placeholders[key];
                     if (options) {
                         return (
-                            <FormControl key={index} size="small" sx={{ minWidth: 100, gap: 1 }}>
+                            <FormControl key={index} size="small" sx={{minWidth: 120, gap: 1}}>
+                                <InputLabel id={`label_${index}`}>Επιλογή</InputLabel>
                                 <Select
+                                    label={'Επιλογή'}
                                     value={textValues[key] || ""}
                                     onChange={(e) => onChange(textIndex, key, e.target.value)}
-                                    displayEmpty
+                                    sx={{
+                                        "& .MuiSelect-select": {
+                                            textWrap: 'wrap'
+                                        }
+                                    }}
                                 >
-                                    <MenuItem value="">Select {key}</MenuItem>
                                     {options.map((option) => (
                                         <MenuItem key={option} value={option}>
                                             {option}
@@ -109,7 +114,7 @@ export default function StoryBuilder() {
     const currentStory = stories[activeStep];
 
     const router = useRouter();
-    const { query } = router;
+    const {query} = router;
 
     const handleStoryTextSelection = (event: React.ChangeEvent<HTMLInputElement>, storyIndex: number) => {
         const selectedTextIndex = Number(event.target.value);
@@ -156,32 +161,35 @@ export default function StoryBuilder() {
                 onChange={(e) => handleStoryTextSelection(e, storyIndex)}
             >
                 {story.texts.map((text, textIndex) => (
-                    <FormControlLabel
-                        key={textIndex}
-                        value={textIndex}
-                        control={<Radio />}
-                        label={
-                            story.placeholders ? (
-                                <TextWithPlaceholders
-                                    text={text}
-                                    textIndex={textIndex}
-                                    placeholders={story.placeholders}
-                                    values={placeholderValues}
-                                    onChange={handlePlaceholderChange}
-                                />
-                            ) : (
-                                text
-                            )
-                        }
-                        sx={{
-                            padding: 2,
-                            alignItems: 'center',
-                            columnGap: 2,
-                            '.MuiFormControlLabel-label': {
-                                pt: 1
+                    <>
+                        <FormControlLabel
+                            key={textIndex}
+                            value={textIndex}
+                            control={<Radio/>}
+                            label={
+                                story.placeholders ? (
+                                    <TextWithPlaceholders
+                                        text={text}
+                                        textIndex={textIndex}
+                                        placeholders={story.placeholders}
+                                        values={placeholderValues}
+                                        onChange={handlePlaceholderChange}
+                                    />
+                                ) : (
+                                    text
+                                )
                             }
-                        }}
-                    />
+                            sx={{
+                                padding: 2,
+                                alignItems: 'center',
+                                columnGap: 2,
+                                '.MuiFormControlLabel-label': {
+                                    pt: 1
+                                }
+                            }}
+                        />
+                        {(textIndex !== story.texts.length - 1) && <Divider sx={{ padding: '10px 0' }}/>}
+                    </>
                 ))}
             </RadioGroup>
         );
@@ -203,8 +211,8 @@ export default function StoryBuilder() {
     };
 
     return (
-        <Container maxWidth="md" sx={{ py: 8 }}>
-            <Box sx={{ textAlign: "center", mb: 6 }}>
+        <Container maxWidth="md" sx={{py: 8}}>
+            <Box sx={{textAlign: "center", mb: 6}}>
                 <Typography variant="h6" gutterBottom>
                     Έκδοση πορίσματος για την εξέταση με κωδικό:{" "}
                     <Typography
@@ -229,7 +237,7 @@ export default function StoryBuilder() {
                 </Typography>
             </Box>
 
-            <Stepper activeStep={activeStep} sx={{ mb: 6 }}>
+            <Stepper activeStep={activeStep} sx={{mb: 6}}>
                 {stories.map((_, index) => (
                     <Step key={index}>
                         <StepLabel></StepLabel>
@@ -237,12 +245,12 @@ export default function StoryBuilder() {
                 ))}
             </Stepper>
 
-            <Typography variant="h6" sx={{ mb: 3 }}>
+            <Typography variant="h6" sx={{mb: 3}}>
                 {`${activeStep + 1}. ${currentStory.title}`}
             </Typography>
 
-            <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
-                <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
+            <Paper elevation={3} sx={{p: 4, mb: 4}}>
+                <Box sx={{display: "flex", justifyContent: "flex-end", mb: 3}}>
                     <Button variant="outlined" onClick={handleCustomTextToggle}>
                         {useCustomText ? "Επιλογες" : "Ελευθερο Κειμενο"}
                     </Button>
@@ -255,7 +263,7 @@ export default function StoryBuilder() {
                         rows={4}
                         value={customTexts[activeStep]}
                         onChange={(e) => handleCustomTextChange(e.target.value)}
-                        placeholder="Write your text here..."
+                        placeholder="Γράψτε το κείμενο σας εδώ..."
                     />
                 ) : (
                     <Box>
@@ -263,16 +271,16 @@ export default function StoryBuilder() {
                     </Box>
                 )}
 
-                <Divider sx={{ my: 3 }} />
-                <Typography variant="subtitle1" sx={{ fontWeight: "medium" }}>
+                <Divider sx={{my: 3}}/>
+                <Typography variant="subtitle1" sx={{fontWeight: "medium"}}>
                     Επιλεγμένο κείμενο:
                 </Typography>
-                <Typography sx={{ mt: 1, whiteSpace: "pre-line" }}>
+                <Typography sx={{mt: 1, whiteSpace: "pre-line"}}>
                     {getProcessedText(selectedStoryTexts[activeStep]) || "-"}
                 </Typography>
             </Paper>
 
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box sx={{display: "flex", justifyContent: "space-between"}}>
                 <Button
                     variant="outlined"
                     onClick={() => {
@@ -280,7 +288,7 @@ export default function StoryBuilder() {
                         setUseCustomText(false);
                     }}
                     disabled={activeStep === 0}
-                    startIcon={<ChevronLeftIcon />}
+                    startIcon={<ChevronLeftIcon/>}
                 >
                     Προηγουμενο
                 </Button>
@@ -299,7 +307,7 @@ export default function StoryBuilder() {
                             });
                         }
                     }}
-                    endIcon={activeStep === stories.length - 1 ? <CheckIcon /> : <ChevronRightIcon />}
+                    endIcon={activeStep === stories.length - 1 ? <CheckIcon/> : <ChevronRightIcon/>}
                 >
                     {activeStep === stories.length - 1 ? "Υποβολη" : "Επομενο"}
                 </Button>
