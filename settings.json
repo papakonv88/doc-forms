@@ -147,11 +147,11 @@
         "propertyName": "kraniotomi_plagiosi",
         "title": "kraniotomi_plagiosi",
         "label": "Κρανιοτομή - Πλαγίωση",
-        "type": "dropdown",
-        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
-        "validator": "^.+$",
+        "type": "multipleSelect",
+        "errorMsg": "Επιλέξτε μια ή παραπάνω τιμές από την λίστα",
+        "validator": "",
         "values": [
-          "ΔΕ", "ΑΡ", "ΑΜΦΟΤΕΡΟΠΛΕΥΡΑ"
+          "ΔΕ", "ΑΡ", "ΑΜΦΟΤΕΡΟΠΛΕΥΡΑ", "ΔΕ", "ΑΡ", "ΑΜΦΟΤΕΡΟΠΛΕΥΡΑ", "ΔΕ", "ΑΡ", "ΑΜΦΟΤΕΡΟΠΛΕΥΡΑ"
         ],
         "required": true
       },
@@ -159,9 +159,9 @@
         "propertyName": "kraniotomi_entopisi",
         "title": "kraniotomi_entopisi",
         "label": "Κρανιοτομή - Εντόπιση",
-        "type": "dropdown",
-        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
-        "validator": "^.+$",
+        "type": "multipleSelect",
+        "errorMsg": "Επιλέξτε μια ή παραπάνω τιμές από την λίστα",
+        "validator": "",
         "values": [
           "ΜΕΤΩΠΙΑΙΑ", "ΚΡΟΤΑΦΙΚΑ", "ΒΡΕΓΜΑΤΙΚΑ", "ΚΕΝΤΡΙΚΑ", "ΙΝΙΑΚΑ"
         ],
@@ -171,9 +171,9 @@
         "propertyName": "topothetisi_ilektrodion",
         "title": "topothetisi_ilektrodion",
         "label": "Τοποθέτηση Ηλεκτροδίων",
-        "type": "dropdown",
-        "errorMsg": "Επιλέξτε μια τιμή από την λίστα",
-        "validator": "^.+$",
+        "type": "multipleSelect",
+        "errorMsg": "Επιλέξτε μια ή παραπάνω τιμές από την λίστα",
+        "validator": "",
         "values": [
           "ΔΙΕΘΝΕΣ ΣΥΣΤΗΜΑ 10-20",
           "ΔΙΕΘΝΕΣ ΣΥΣΤΗΜΑ 10-20 ΜΕ ΧΑΜΗΛΗ ΚΡΟΤΑΦΙΚΗ ΑΛΥΣΟ",

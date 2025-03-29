@@ -7,6 +7,7 @@ import DatePickerWrapper from "../DatePickerWrapper/DatePickerWrapper";
 import InputType from "../../enums/InputTypes";
 import FreeText from "../FreeText/FreeText";
 import * as React from "react";
+import MultipleSelect from "../MultipleSelect/MultipleSelect";
 
 type ValueType = InputProps['value'];
 
@@ -76,6 +77,17 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                          required={element.required}
                                          handleError={handleError}
                         />
+                    }
+                    if (element.type === InputType.MULTIPLESELECT) {
+                        return <MultipleSelect key={`${element.propertyName}_${idx}`} options={element.values}
+                                               property={element.propertyName} handleChange={handleValuesChange}
+                                               value={formValues[element.propertyName as keyof FormValuesPatient]}
+                                               label={element.label} errorMsg={element.errorMsg}
+                                               error={errors[element.propertyName as keyof FormValuesPatient]}
+                                               required={element.required}
+                                               isDepended={Boolean(element?.dependsOn)}
+                                               dependsOn={formValues[element?.dependsOn?.propertyName] !== element?.dependsOn?.value && Boolean(formValues[element?.dependsOn?.propertyName])}
+                                               handleError={handleError}/>
                     }
                 })}
             </Stack>
