@@ -29,6 +29,10 @@ function Patient() {
         patronimo: '',
         amka: '',
         imerominia_genisis: '',
+        endeiksi_heg: {
+            radio: '',
+            string: ''
+        },
         imerominia_katagrafis: '',
         typos_katagrafis: '',
         parapombi: '',
@@ -59,6 +63,7 @@ function Patient() {
         amka: false,
         imerominia_genisis: false,
         imerominia_katagrafis: false,
+        endeiksi_heg: false,
         typos_katagrafis: false,
         parapombi: false,
         aitia_eksetasis: false,
@@ -86,6 +91,10 @@ function Patient() {
             amka: '',
             imerominia_genisis: '',
             imerominia_katagrafis: '',
+            endeiksi_heg: {
+                radio: '',
+                string: ''
+            },
             typos_katagrafis: '',
             parapombi: '',
             aitia_eksetasis: {
@@ -115,6 +124,7 @@ function Patient() {
             amka: false,
             imerominia_genisis: false,
             imerominia_katagrafis: false,
+            endeiksi_heg: false,
             typos_katagrafis: false,
             parapombi: false,
             aitia_eksetasis: false,

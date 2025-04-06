@@ -1,16 +1,9 @@
-import {useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {
     Box,
     Button,
-    Container,
     Divider,
-    FormControl,
-    FormControlLabel, InputLabel,
-    MenuItem,
     Paper,
-    Radio,
-    RadioGroup,
-    Select,
     Step,
     StepLabel,
     Stepper,
@@ -24,112 +17,50 @@ import {
 } from "@mui/icons-material";
 import {validateText} from "../../utils";
 import {useRouter} from "next/router";
+import Settings from "../../settings.json";
+import RenderSelection from "../../components/RenderSelection/RenderSelection";
+import PageContainer from "../../components/Containers/PageContainer";
+import SectionContainer from "../../components/Containers/SectionContainer/SectionContainer";
+import {useAppContext} from "../../context";
+import MessageVariants from "../../enums/MessageVariants";
 
-const stories = [
-    {
-        id: 1,
-        title: "Γενική περιγραφή",
-        texts: [
-            "Το διάγραμμα έχει καλή οργάνωση.",
-            "Το διάγραμμα είναι δύσκολο να διαβαστεί.",
-            "Το διάγραμμα δεν περιλαμβάνει αρκετά στοιχεία.",
-        ],
-        placeholders: null,
-    },
-    {
-        id: 2,
-        title: "Οπίσθιες δραστηριότητες",
-        texts: [
-            "Το ΗΕΓ εγρήγορσης χαρακτηρίζεται από <option1>, <option2>, <option3> ρυθμό άλφα, συχνότητας <option4> με εντόπιση στις <option5> (πχ ινιακές) περιοχές και με <option6>.",
-        ],
-        placeholders: {
-            option1: ['συμμετρικό, ημιτονοειδή', 'συμμετρικό', 'μέτρια ασύμμετρο (σταθερή ασυμμετρία εύρους δυναμικού <50% ή συχνότητας από 0.5Hz – 1Hz) υπέρ της (ΔΕ ή ΑΡ) πλευράς', 'ασύμμετρο (≥50% εύρους δυναμικού ή συχνότητας >1 Hz) υπέρ της ΔΕ ή ΑΡ πλευράς', 'κενό'],
-            option2: ["σταθερό", "ασταθή"],
-            option3: ["ρυθμό άλφα", "οπίσθιο επικρατητικό ρυθμό"],
-            option4: ["αριθμό σε μπάρα από 3 – 12 και >12"],
-            option5: ["ινιακές, ινιακές και βρεγματικές, ινιακές και οπίσθιες κροταφικές, οπίσθιες απαγωγές"],
-            option6: ["καλή αντίδραση αποκλεισμού", "χωρίς αντίδραση αποκλεισμού", "ασύμμετρη αντίδραση αποκλεισμού υπέρ της ΔΕ ή ΑΡ πλευράς"],
-        },
-    },
-];
-
-interface TextWithPlaceholdersProps {
-    text: string;
-    textIndex: number;
-    placeholders: Record<string, string[]>;
-    values: Record<string, Record<string, string>>;
-    onChange: (textIndex: number, key: string, value: string) => void;
-}
-
-function TextWithPlaceholders({text, textIndex, placeholders, values, onChange}: TextWithPlaceholdersProps) {
-    const parts = text.split(/(<[^>]+>)/);
-    const textValues = values[textIndex] || {};
-
-    return (
-        <Box sx={{display: 'inline-flex', flexWrap: 'wrap', alignItems: 'center', gap: 1}}>
-            {parts.map((part, index) => {
-                const match = part.match(/<([^>]+)>/);
-                if (match) {
-                    const key = match[1];
-                    const options = placeholders[key];
-                    if (options) {
-                        return (
-                            <FormControl key={index} size="small" sx={{minWidth: 120, gap: 1}}>
-                                <InputLabel id={`label_${index}`}>Επιλογή</InputLabel>
-                                <Select
-                                    label={'Επιλογή'}
-                                    value={textValues[key] || ""}
-                                    onChange={(e) => onChange(textIndex, key, e.target.value)}
-                                    sx={{
-                                        "& .MuiSelect-select": {
-                                            textWrap: 'wrap'
-                                        }
-                                    }}
-                                >
-                                    {options.map((option) => (
-                                        <MenuItem key={option} value={option}>
-                                            {option}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        );
-                    }
-                }
-                return <span key={index}>{part}</span>;
-            })}
-        </Box>
-    );
-}
-
-export default function StoryBuilder() {
+function ReportBuilder() {
+    const report = useMemo(() => {
+        return Settings.doctor.report
+    }, [])
+    const {handleOpenSnackbar} = useAppContext();
     const [activeStep, setActiveStep] = useState(0);
     const [selectedStoryTexts, setSelectedStoryTexts] = useState<string[]>(
-        stories.map(() => "")
+        report.map(() => "")
     );
     const [useCustomText, setUseCustomText] = useState(false);
-    const [customTexts, setCustomTexts] = useState(stories.map(() => ""));
+    const [customTexts, setCustomTexts] = useState(report.map(() => ""));
     const [placeholderValues, setPlaceholderValues] = useState<Record<number, Record<string, string>>>({});
+    const [finalSelection, setFinalSelection] = useState([])
 
-    const currentStory = stories[activeStep];
+    const currentStory = report[activeStep];
+
+
+    console.log(selectedStoryTexts, 'selected store texts')
+
 
     const router = useRouter();
     const {query} = router;
 
-    const handleStoryTextSelection = (event: React.ChangeEvent<HTMLInputElement>, storyIndex: number) => {
+    const handleStoryTextSelection = useCallback((event: React.ChangeEvent<HTMLInputElement>, storyIndex: number) => {
         const selectedTextIndex = Number(event.target.value);
         setSelectedStoryTexts((prev) => {
             const newTexts = [...prev];
-            newTexts[storyIndex] = stories[storyIndex].texts[selectedTextIndex];
+            newTexts[storyIndex] = report[storyIndex].texts[selectedTextIndex];
             return newTexts;
         });
-    };
+    }, [selectedStoryTexts]);
 
     const handleCustomTextToggle = () => {
         setUseCustomText((prev) => !prev);
     };
 
-    const handleCustomTextChange = (text: string) => {
+    const handleCustomTextChange = useCallback((text: string) => {
         setCustomTexts((prev) => {
             const newTexts = [...prev];
             newTexts[activeStep] = text;
@@ -141,7 +72,7 @@ export default function StoryBuilder() {
             newTexts[activeStep] = text;
             return newTexts;
         });
-    };
+    }, [selectedStoryTexts, customTexts]);
 
     const handlePlaceholderChange = (textIndex: number, key: string, value: string) => {
         setPlaceholderValues(prev => ({
@@ -153,165 +84,143 @@ export default function StoryBuilder() {
         }));
     };
 
-    const renderStoryTextSelection = (storyIndex: number) => {
-        const story = stories[storyIndex];
-        return (
-            <RadioGroup
-                value={stories[storyIndex].texts.indexOf(selectedStoryTexts[storyIndex])}
-                onChange={(e) => handleStoryTextSelection(e, storyIndex)}
-            >
-                {story.texts.map((text, textIndex) => (
-                    <>
-                        <FormControlLabel
-                            key={textIndex}
-                            value={textIndex}
-                            control={<Radio/>}
-                            label={
-                                story.placeholders ? (
-                                    <TextWithPlaceholders
-                                        text={text}
-                                        textIndex={textIndex}
-                                        placeholders={story.placeholders}
-                                        values={placeholderValues}
-                                        onChange={handlePlaceholderChange}
-                                    />
-                                ) : (
-                                    text
-                                )
-                            }
-                            sx={{
-                                padding: 2,
-                                alignItems: 'center',
-                                columnGap: 2,
-                                '.MuiFormControlLabel-label': {
-                                    pt: 1
-                                }
-                            }}
-                        />
-                        {(textIndex !== story.texts.length - 1) && <Divider sx={{ padding: '10px 0' }}/>}
-                    </>
-                ))}
-            </RadioGroup>
-        );
+    const updateFinalSelection = (text) => {
+        const finalSelectionCp = [...finalSelection]
+        finalSelectionCp[activeStep] = text || customTexts[activeStep]
+        setFinalSelection(finalSelectionCp)
+    }
+
+    const handleNextStep = () => {
+        const text = getProcessedText(selectedStoryTexts[activeStep]);
+        const regex = /\.\.\.\.\.\./;
+        const isMatch = regex.test(text);
+        if (isMatch && selectedStoryTexts[activeStep]) {
+            handleOpenSnackbar('Συμπληρώστε τα απαιτούμενα πεδία ή επιλέξτε ελεύθερο κείμενο για να προχωρήσετε', MessageVariants.ERROR)
+            return;
+        }
+        updateFinalSelection(text)
+        if (activeStep < report.length - 1) {
+            setActiveStep((prev) => prev + 1);
+            setUseCustomText(false);
+        }
     };
 
-    const getProcessedText = (text: string) => {
+
+
+
+    const getProcessedText =(text: string) => {
         if (!currentStory.placeholders) return text;
 
-        const selectedTextIndex = stories[activeStep].texts.indexOf(text);
+        const selectedTextIndex = report[activeStep].texts.indexOf(text);
         const textValues = placeholderValues[selectedTextIndex] || {};
 
         let processedText = text;
         Object.entries(currentStory.placeholders).forEach(([key, _]) => {
             const placeholder = `<${key}>`;
-            const value = textValues[key] || placeholder;
+            const value = textValues[key] || '......';
             processedText = processedText.replace(placeholder, value);
         });
-        return processedText;
+        return processedText
     };
 
     return (
-        <Container maxWidth="md" sx={{py: 8}}>
-            <Box sx={{textAlign: "center", mb: 6}}>
-                <Typography variant="h6" gutterBottom>
-                    Έκδοση πορίσματος για την εξέταση με κωδικό:{" "}
-                    <Typography
-                        sx={{
-                            cursor: "pointer",
-                            display: "inline",
-                            fontWeight: "bold",
-                            fontSize: "inherit",
-                            color: "text.primary",
-                            transition: "color 0.2s ease-in-out",
-                            "&:hover": {
-                                color: "primary.main",
-                            },
-                        }}
-                        onClick={() => window.open(`/exams/${query?.id}`, "_blank")}
-                    >
-                        {validateText(query?.id)}
+        <PageContainer>
+            <SectionContainer pb={12}>
+                <Box sx={{textAlign: "center", my: 6}}>
+                    <Typography variant="h6" gutterBottom>
+                        Έκδοση πορίσματος για την εξέταση με κωδικό:{" "}
+                        <Typography
+                            sx={{
+                                cursor: "pointer",
+                                display: "inline",
+                                fontWeight: "bold",
+                                fontSize: "inherit",
+                                color: "text.primary",
+                                transition: "color 0.2s ease-in-out",
+                                "&:hover": {
+                                    color: "primary.main",
+                                },
+                            }}
+                            onClick={() => window.open(`/exams/${query?.id}`, "_blank")}
+                        >
+                            {validateText(query?.id)}
+                        </Typography>
                     </Typography>
-                </Typography>
-                <Typography variant="subtitle1" color="text.secondary">
-                    Βήμα {activeStep + 1} από {stories.length}
-                </Typography>
-            </Box>
-
-            <Stepper activeStep={activeStep} sx={{mb: 6}}>
-                {stories.map((_, index) => (
-                    <Step key={index}>
-                        <StepLabel></StepLabel>
-                    </Step>
-                ))}
-            </Stepper>
-
-            <Typography variant="h6" sx={{mb: 3}}>
-                {`${activeStep + 1}. ${currentStory.title}`}
-            </Typography>
-
-            <Paper elevation={3} sx={{p: 4, mb: 4}}>
-                <Box sx={{display: "flex", justifyContent: "flex-end", mb: 3}}>
-                    <Button variant="outlined" onClick={handleCustomTextToggle}>
-                        {useCustomText ? "Επιλογες" : "Ελευθερο Κειμενο"}
-                    </Button>
+                    <Typography variant="subtitle1" color="text.secondary">
+                        Βήμα {activeStep + 1} από {report.length}
+                    </Typography>
                 </Box>
 
-                {useCustomText ? (
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={4}
-                        value={customTexts[activeStep]}
-                        onChange={(e) => handleCustomTextChange(e.target.value)}
-                        placeholder="Γράψτε το κείμενο σας εδώ..."
-                    />
-                ) : (
-                    <Box>
-                        {renderStoryTextSelection(activeStep)}
+                <Stepper activeStep={activeStep} sx={{mb: 6}}>
+                    {report.map((_, index) => (
+                        <Step key={index}>
+                            <StepLabel></StepLabel>
+                        </Step>
+                    ))}
+                </Stepper>
+
+                <Typography variant="h6" sx={{mb: 3}}>
+                    {`${activeStep + 1}. ${currentStory.title}`}
+                </Typography>
+
+                <Paper elevation={3} sx={{p: 4, mb: 4}}>
+                    <Box sx={{display: "flex", justifyContent: "flex-end", mb: 6}}>
+                        <Button variant="outlined" onClick={handleCustomTextToggle}>
+                            {useCustomText ? "Επιλογες" : "Ελευθερο Κειμενο"}
+                        </Button>
                     </Box>
-                )}
 
-                <Divider sx={{my: 3}}/>
-                <Typography variant="subtitle1" sx={{fontWeight: "medium"}}>
-                    Επιλεγμένο κείμενο:
-                </Typography>
-                <Typography sx={{mt: 1, whiteSpace: "pre-line"}}>
-                    {getProcessedText(selectedStoryTexts[activeStep]) || "-"}
-                </Typography>
-            </Paper>
+                    {useCustomText ? (
+                        <TextField
+                            fullWidth
+                            multiline
+                            rows={4}
+                            value={customTexts[activeStep]}
+                            onChange={(e) => handleCustomTextChange(e.target.value)}
+                            placeholder="Γράψτε το κείμενο σας εδώ..."
+                        />
+                    ) : (
+                        <Box>
+                            <RenderSelection story={report[activeStep]} index={activeStep}
+                                             selectedStoryTexts={selectedStoryTexts}
+                                             handlePlaceholderChange={handlePlaceholderChange}
+                                             handleStoryTextSelection={handleStoryTextSelection}
+                                             placeholderValues={placeholderValues}/>
+                        </Box>
+                    )}
 
-            <Box sx={{display: "flex", justifyContent: "space-between"}}>
-                <Button
-                    variant="outlined"
-                    onClick={() => {
-                        setActiveStep((prev) => prev - 1);
-                        setUseCustomText(false);
-                    }}
-                    disabled={activeStep === 0}
-                    startIcon={<ChevronLeftIcon/>}
-                >
-                    Προηγουμενο
-                </Button>
-                <Button
-                    variant="contained"
-                    onClick={() => {
-                        if (activeStep < stories.length - 1) {
-                            setActiveStep((prev) => prev + 1);
+                    <Divider sx={{my: 3}}/>
+                    <Typography variant="subtitle1" sx={{fontWeight: "medium"}}>
+                        Επιλεγμένο κείμενο:
+                    </Typography>
+                    <Typography sx={{mt: 1, whiteSpace: "pre-line"}}>
+                        {getProcessedText(selectedStoryTexts[activeStep]) || "-"}
+                    </Typography>
+                </Paper>
+
+                <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                    <Button
+                        variant="outlined"
+                        onClick={() => {
+                            setActiveStep((prev) => prev - 1);
                             setUseCustomText(false);
-                        } else {
-                            console.log("Final selections:", {
-                                selectedStoryTexts,
-                                customTexts,
-                                useCustomText,
-                                placeholderValues,
-                            });
-                        }
-                    }}
-                    endIcon={activeStep === stories.length - 1 ? <CheckIcon/> : <ChevronRightIcon/>}
-                >
-                    {activeStep === stories.length - 1 ? "Υποβολη" : "Επομενο"}
-                </Button>
-            </Box>
-        </Container>
+                        }}
+                        disabled={activeStep === 0}
+                        startIcon={<ChevronLeftIcon/>}
+                    >
+                        Προηγουμενο
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleNextStep}
+                        endIcon={activeStep === report.length - 1 ? <CheckIcon/> : <ChevronRightIcon/>}
+                    >
+                        {activeStep === report.length - 1 ? "Υποβολη" : "Επομενο"}
+                    </Button>
+                </Box>
+            </SectionContainer>
+        </PageContainer>
     );
 }
+
+export default ReportBuilder;

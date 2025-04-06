@@ -1,11 +1,5 @@
 import React from "react";
-import {
-    Typography,
-    Grid,
-    Divider,
-    Container,
-    Stack
-} from "@mui/material";
+import {Container, Divider, Grid, Stack, Typography} from "@mui/material";
 import {validateAndFormatDate, validateText} from "../../utils";
 
 function ExamDetails(exam: any) {
@@ -42,6 +36,9 @@ function ExamDetails(exam: any) {
                         <Typography>
                             <strong>Ημερομηνία Εξέτασης:</strong>{" "}
                             {validateAndFormatDate(exam.imerominia_katagrafis)}
+                        </Typography>
+                        <Typography>
+                            <strong>'Ενδειξη για ΗΕΓ:</strong> {validateText(exam.endeiksi_heg?.string)}
                         </Typography>
                         <Typography>
                             <strong>Τύπος Καταγραφής:</strong> {validateText(exam.typos_katagrafis)}

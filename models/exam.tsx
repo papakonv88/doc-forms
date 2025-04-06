@@ -12,9 +12,15 @@ interface DiarkeiaKatagrafis {
     string?: string;
 }
 
+
+interface endeiksiHeg {
+    radio?: string;
+    string?: string;
+}
 interface Exam extends Document {
     _id: ObjectId;
     imerominia_katagrafis: Date;
+    endeiksi_heg: endeiksiHeg;
     typos_katagrafis: string;
     parapombi: string;
     aitia_eksetasis: AitiaEksetasis;
@@ -34,6 +40,10 @@ interface Exam extends Document {
 
 const NewExamSchema = new mongoose.Schema({
     imerominia_katagrafis: {type: Date, required: true},
+    endeiksi_heg: {
+        radio: String,
+        string: String
+    },
     typos_katagrafis: {type: String, required: true},
     parapombi: {type: String, required: true},
     aitia_eksetasis: {

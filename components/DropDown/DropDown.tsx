@@ -35,6 +35,7 @@ function DropDown({
                 <Box sx={hasNested ? tokens.classes.formBoxNested : tokens.classes.formBox}>
                     {options && options?.length > 0 &&
                         <Autocomplete
+                            freeSolo={true}
                             aria-required={required}
                             // @ts-ignore
                             isOptionEqualToValue={(option, value) => option.value === value.value}

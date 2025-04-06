@@ -5,6 +5,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (req.method) {
         case 'POST':
             const row = new NewExam(req.body);
+            console.log(row, 'row')
             try {
                 const newRow = await row.save()
                 res.status(201).json({message: 'Exam added successfully', newRow});
