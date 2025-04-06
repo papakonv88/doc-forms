@@ -77,7 +77,7 @@ function MultipleSelect({
                                     <Select
                                         style={{
                                             width: 550,
-                                            textWrap: 'wrap'
+                                            wordWrap: 'normal',
                                         }}
                                         multiple
                                         value={inputVal}
