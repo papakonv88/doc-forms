@@ -1,7 +1,17 @@
 import {Divider, FormControlLabel, Radio, RadioGroup} from "@mui/material";
 import TextWithPlaceholders from "../TextWithPlaceholder/TextWithPlaceholders";
+import {useMemo} from "react";
 
 function RenderSelection ({story, index, selectedStoryTexts, handlePlaceholderChange, handleStoryTextSelection, placeholderValues}) {
+    const placeholderMap = useMemo(() => {
+        if (!Array.isArray(story.placeholders)) return story.placeholders || {};
+        const map: Record<string, string[]> = {};
+        story.placeholders.forEach((p: { title?: string; values?: string[] }) => {
+            const key = (p?.title || "").replace(/\s+/g, "");
+            map[key] = p?.values || [];
+        });
+        return map;
+    }, [story.placeholders]);
     return (
         <RadioGroup
             value={story.texts.indexOf(selectedStoryTexts[index])}
@@ -18,7 +28,7 @@ function RenderSelection ({story, index, selectedStoryTexts, handlePlaceholderCh
                                 <TextWithPlaceholders
                                     text={text}
                                     textIndex={textIndex}
-                                    placeholders={story.placeholders}
+                                    placeholders={placeholderMap}
                                     values={placeholderValues}
                                     onChange={handlePlaceholderChange}
                                 />

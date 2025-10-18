@@ -108,19 +108,29 @@ function ReportBuilder() {
 
 
 
-    const getProcessedText =(text: string) => {
+    const getProcessedText = (text: string) => {
         if (!currentStory.placeholders) return text;
 
         const selectedTextIndex = report[activeStep].texts.indexOf(text);
         const textValues = placeholderValues[selectedTextIndex] || {};
 
-        let processedText = text;
-        Object.entries(currentStory.placeholders).forEach(([key, _]) => {
-            const placeholder = `<${key}>`;
-            const value = textValues[key] || '......';
-            processedText = processedText.replace(placeholder, value);
+        // Normalize placeholders list into a map for consistent key lookup
+        const placeholderMap: Record<string, string[]> = Array.isArray(currentStory.placeholders)
+            ? currentStory.placeholders.reduce((acc: Record<string, string[]>, p: any) => {
+                const k = String(p?.title || '').replace(/\s+/g, '');
+                acc[k] = p?.values || [];
+                return acc;
+            }, {})
+            : currentStory.placeholders as any;
+
+        // Replace tokens in text by scanning for <...> and using normalized keys
+        return String(text).replace(/<[^>]+>/g, (token) => {
+            const rawKey = token.slice(1, -1);
+            const normalizedKey = rawKey.trim().replace(/\s+/g, '');
+            const value = textValues[normalizedKey] || '......';
+            // Only replace if it's a known placeholder; otherwise keep token
+            return placeholderMap[normalizedKey] ? value : token;
         });
-        return processedText
     };
 
     return (

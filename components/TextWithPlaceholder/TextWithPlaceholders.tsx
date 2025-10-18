@@ -4,7 +4,7 @@ interface TextWithPlaceholdersProps {
     text: string;
     textIndex: number;
     placeholders: Record<string, string[]>;
-    values: Record<string, Record<string, string>>;
+    values: Record<number, Record<string, string>>;
     onChange: (textIndex: number, key: string, value: string) => void;
 }
 function TextWithPlaceholders({text, textIndex, placeholders, values, onChange}: TextWithPlaceholdersProps) {
@@ -16,16 +16,17 @@ function TextWithPlaceholders({text, textIndex, placeholders, values, onChange}:
             {parts.map((part, index) => {
                 const match = part.match(/<([^>]+)>/);
                 if (match) {
-                    const key = match[1];
-                    const options = placeholders[key];
+                    const rawKey = match[1];
+                    const normalizedKey = rawKey.trim().replace(/\s+/g, "");
+                    const options = placeholders[normalizedKey];
                     if (options) {
                         return (
                             <FormControl key={index} size="small" sx={{minWidth: 120, gap: 1}}>
                                 <InputLabel id={`label_${index}`}>Επιλογή</InputLabel>
                                 <Select
                                     label={'Επιλογή'}
-                                    value={textValues[key] || ""}
-                                    onChange={(e) => onChange(textIndex, key, e.target.value)}
+                                    value={textValues[normalizedKey] || ""}
+                                    onChange={(e) => onChange(textIndex, normalizedKey, e.target.value as string)}
                                     sx={{
                                         "& .MuiSelect-select": {
                                             textWrap: 'wrap'
