@@ -21,7 +21,7 @@ const steps = ['Εισαγωγή Ασθενή', 'Στοιχεία Εξέταση
 function Patient() {
     const [activeStep, setActiveStep] = useState(0);
     const [patientUId, setPatientUId] = useState('');
-    const {handleOpenSnackbar, handleLoader} = useAppContext();
+    const {handleOpenSnackbar, handleLoader, isLoading} = useAppContext();
     const [dialog, setDialog] = useState({mode: '', open: false, title: '', message: '', result: true});
     const [formValues, setFormValues] = useState({
         name: '',
@@ -201,6 +201,7 @@ function Patient() {
 
     const handlePatchPatient = async (id: string) => {
         try {
+            handleLoader(true);
             const {name, surname, patronimo, imerominia_genisis} = formValues;
             await axios.patch(`/api/insertPatient?_id=${id}`, {name, surname, patronimo, imerominia_genisis});
             handleOpenSnackbar('Πραγματοποιήθηκε η ενημέρωση των στοιχείων του ασθενούς', MessageVariants.SUCCESS)
@@ -208,11 +209,14 @@ function Patient() {
             handleCloseConfirmDialog();
         } catch (e) {
             handleOpenSnackbar('Σφάλμα κατά την επικαιροποίηση των στοιχείων ασθενούς', MessageVariants.ERROR)
+        } finally {
+            handleLoader(false);
         }
     }
 
     const handleInsertPatient = async () => {
         try {
+            handleLoader(true);
             const {name, surname, patronimo, amka, imerominia_genisis, ...rest} = formValues;
             const result = await savePatient({
                 name, surname, patronimo, amka, imerominia_genisis
@@ -225,11 +229,14 @@ function Patient() {
             handleCloseConfirmDialog();
         } catch (e) {
             handleOpenSnackbar('Σφάλμα κατά την εισαγωγή του νέου ασθενούς', MessageVariants.ERROR)
+        } finally {
+            handleLoader(false);
         }
     }
 
     const handleInsertExam = async () => {
         try {
+            handleLoader(true);
             const {name, surname, patronimo, amka, imerominia_genisis, ...rest} = formValues;
             await saveExam({
                 ...rest,
@@ -240,11 +247,14 @@ function Patient() {
             await router.push('/');
         } catch (e) {
             handleOpenSnackbar('Σφάλμα κατά την εισαγωγή της νέας εξέτασης', MessageVariants.ERROR)
+        } finally {
+            handleLoader(false);
         }
     }
 
     const handleDeletePatient = async () => {
         try {
+            handleLoader(true);
             await deletePatient(patientUId)
             handleOpenSnackbar('Επιτυχής Διαγραφή Ασθενούς', MessageVariants.SUCCESS)
             setPatientUId('');
@@ -252,6 +262,8 @@ function Patient() {
             handleCloseConfirmDialog();
         } catch (e) {
             handleOpenSnackbar('Σφάλμα κατά την Διαγραφή Ασθενούς', MessageVariants.ERROR)
+        } finally {
+            handleLoader(false);
         }
     }
 
@@ -405,12 +417,16 @@ function Patient() {
                                 onClick={handleDelete}
                                 variant="contained"
                                 color="error"
-                                disabled={!Boolean(patientUId)}
+                                disabled={!Boolean(patientUId) || isLoading}
                                 startIcon={<DeleteIcon/>}
                             >
                                 Διαγραφη Ασθενη
                             </Button>
-                            <Button variant="contained" onClick={handlePatientSubmit}>
+                            <Button 
+                                variant="contained" 
+                                onClick={handlePatientSubmit}
+                                disabled={isLoading}
+                            >
                                 Συνεχεια σε Εξεταση
                             </Button>
                         </Box>
@@ -422,12 +438,18 @@ function Patient() {
                         <Box display={'flex'} justifyContent={'end'} mb={4} mt={7} columnGap={2}>
                             <Button
                                 variant="contained"
-                                disabled={activeStep === 0}
+                                disabled={activeStep === 0 || isLoading}
                                 onClick={handleBack}
                             >
                                 Πισω
                             </Button>
-                            <Button onClick={handleExamSubmit} variant="contained">Υποβολη</Button>
+                            <Button 
+                                onClick={handleExamSubmit} 
+                                variant="contained"
+                                disabled={isLoading}
+                            >
+                                Υποβολη
+                            </Button>
                         </Box>
                     </SectionContainer>
                 }

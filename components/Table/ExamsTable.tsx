@@ -12,9 +12,11 @@ import {
     TextField,
     IconButton,
     Menu,
-    MenuItem
+    MenuItem,
+    Chip
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import SearchIcon from '@mui/icons-material/Search';
 import {useRouter} from "next/router";
 import {validateAndFormatDate, validateText} from "../../utils";
 
@@ -88,43 +90,171 @@ function ExamsTable({exams}: any) {
     return (
         <div>
             <TextField
-                label="Αναζήτηση"
-                variant="standard"
+                label="Αναζήτηση εξετάσεων..."
+                variant="outlined"
                 fullWidth
                 value={search}
                 onChange={handleSearch}
-                sx={{marginBottom: 5, marginTop: 8}}
+                sx={{
+                    marginBottom: 4,
+                    marginTop: 4,
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        backgroundColor: 'background.paper',
+                    }
+                }}
+                InputProps={{
+                    startAdornment: <SearchIcon sx={{ color: 'text.secondary', mr: 1 }} />
+                }}
             />
 
-            <TableContainer component={Paper}>
+            <TableContainer
+                component={Paper}
+                sx={{
+                    borderRadius: 3,
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                }}
+            >
                 <Table>
                     <TableHead>
-                        <TableRow>
-                            <TableCell className={'table-row'}>Κωδικός Εξέτασης</TableCell>
-                            <TableCell className={'table-row'}>Ημερομηνία Καταγραφής</TableCell>
-                            <TableCell className={'table-row'}>Αιτία Εξέτασης</TableCell>
-                            <TableCell className={'table-row'}>Όνομα Ασθενή</TableCell>
-                            <TableCell className={'table-row'}>Επώνυμο Ασθενή</TableCell>
-                            <TableCell className={'table-row'}>Πατρώνυμο</TableCell>
-                            <TableCell className={'table-row'}>AMKA</TableCell>
-                            <TableCell className={'table-row'}>Ενέργειες</TableCell>
+                        <TableRow sx={{ backgroundColor: '#2a2a2a' }}>
+                            <TableCell
+                                className={'table-row'}
+                                sx={{
+                                    fontWeight: 700,
+                                    color: '#ffffff',
+                                    borderBottom: '2px solid #1976d2',
+                                    py: 2
+                                }}
+                            >
+                                Κωδικός Εξέτασης
+                            </TableCell>
+                            <TableCell
+                                className={'table-row'}
+                                sx={{
+                                    fontWeight: 700,
+                                    color: '#ffffff',
+                                    borderBottom: '2px solid #1976d2',
+                                    py: 2
+                                }}
+                            >
+                                Ημερομηνία Καταγραφής
+                            </TableCell>
+                            <TableCell
+                                className={'table-row'}
+                                sx={{
+                                    fontWeight: 700,
+                                    color: '#ffffff',
+                                    borderBottom: '2px solid #1976d2',
+                                    py: 2
+                                }}
+                            >
+                                Αιτία Εξέτασης
+                            </TableCell>
+                            <TableCell
+                                className={'table-row'}
+                                sx={{
+                                    fontWeight: 700,
+                                    color: '#ffffff',
+                                    borderBottom: '2px solid #1976d2',
+                                    py: 2
+                                }}
+                            >
+                                Όνομα Ασθενή
+                            </TableCell>
+                            <TableCell
+                                className={'table-row'}
+                                sx={{
+                                    fontWeight: 700,
+                                    color: '#ffffff',
+                                    borderBottom: '2px solid #1976d2',
+                                    py: 2
+                                }}
+                            >
+                                Επώνυμο Ασθενή
+                            </TableCell>
+                            <TableCell
+                                className={'table-row'}
+                                sx={{
+                                    fontWeight: 700,
+                                    color: '#ffffff',
+                                    borderBottom: '2px solid #1976d2',
+                                    py: 2
+                                }}
+                            >
+                                Πατρώνυμο
+                            </TableCell>
+                            <TableCell
+                                className={'table-row'}
+                                sx={{
+                                    fontWeight: 700,
+                                    color: '#ffffff',
+                                    borderBottom: '2px solid #1976d2',
+                                    py: 2
+                                }}
+                            >
+                                AMKA
+                            </TableCell>
+                            <TableCell
+                                className={'table-row'}
+                                sx={{
+                                    fontWeight: 700,
+                                    color: '#ffffff',
+                                    borderBottom: '2px solid #1976d2',
+                                    py: 2
+                                }}
+                            >
+                                Ενέργειες
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {paginatedData.map((row, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{row.examId}</TableCell>
-                                <TableCell>{validateAndFormatDate(row.imerominia_katagrafis)}</TableCell>
-                                <TableCell>{validateText(row.aitia_eksetasis.string)}</TableCell>
-                                <TableCell>{validateText(row.patient.name)}</TableCell>
-                                <TableCell>{validateText(row.patient.surname)}</TableCell>
-                                <TableCell>{validateText(row.patient.patronimo)}</TableCell>
-                                <TableCell>{validateText(row.patient.amka)}</TableCell>
-                                <TableCell>
+                            <TableRow
+                                key={index}
+                                sx={{
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                                    },
+                                }}
+                            >
+                                <TableCell sx={{ py: 2, fontWeight: 500 }}>
+                                    <Chip
+                                        label={row.examId}
+                                        color="primary"
+                                        variant="outlined"
+                                        size="small"
+                                    />
+                                </TableCell>
+                                <TableCell sx={{ py: 2 }}>
+                                    {validateAndFormatDate(row.imerominia_katagrafis)}
+                                </TableCell>
+                                <TableCell sx={{ py: 2 }}>
+                                    {validateText(row.aitia_eksetasis.string)}
+                                </TableCell>
+                                <TableCell sx={{ py: 2, fontWeight: 500 }}>
+                                    {validateText(row.patient.name)}
+                                </TableCell>
+                                <TableCell sx={{ py: 2, fontWeight: 500 }}>
+                                    {validateText(row.patient.surname)}
+                                </TableCell>
+                                <TableCell sx={{ py: 2 }}>
+                                    {validateText(row.patient.patronimo)}
+                                </TableCell>
+                                <TableCell sx={{ py: 2, fontFamily: 'monospace' }}>
+                                    {validateText(row.patient.amka)}
+                                </TableCell>
+                                <TableCell sx={{ py: 2 }}>
                                     <IconButton
                                         aria-controls="action-menu"
                                         aria-haspopup="true"
                                         onClick={(e) => handleMenuOpen(e, row._id)}
+                                        sx={{
+                                            '&:hover': {
+                                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                            }
+                                        }}
                                     >
                                         <MoreVertIcon/>
                                     </IconButton>
@@ -133,9 +263,26 @@ function ExamsTable({exams}: any) {
                                         anchorEl={anchorEl}
                                         open={Boolean(anchorEl) && selectedRowId === row._id}
                                         onClose={handleMenuClose}
+                                        PaperProps={{
+                                            sx: {
+                                                borderRadius: 2,
+                                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+                                            }
+                                        }}
                                     >
-                                        <MenuItem onClick={() => goToExam(row.examId)}>Εξέταση</MenuItem>
-                                        <MenuItem onClick={() => goToReport(row.examId)}>Πόρισμα</MenuItem>
+                                        <MenuItem
+                                            onClick={() => goToExam(row.examId)}
+                                            sx={{ fontWeight: 500 }}
+                                        >
+                                            Εξέταση
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={() => goToReport(row.examId)}
+                                            sx={{ fontWeight: 500 }}
+                                        >
+                                            Πόρισμα
+                                        </MenuItem>
                                     </Menu>
                                 </TableCell>
                             </TableRow>

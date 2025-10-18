@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
-import {Autocomplete, Box, TextField} from "@mui/material";
+import {Autocomplete, Box, TextField, CircularProgress} from "@mui/material";
 import MessageVariants from "../../../enums/MessageVariants";
 import {useAppContext} from "../../../context";
 
@@ -78,7 +78,7 @@ function AutocompleteWithAPI({getPatients, handleOptionChange}) {
                             ...params.InputProps,
                             endAdornment: (
                                 <>
-                                    {loading ? <span>Φόρτωση...</span> : null}
+                                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
                                     {params.InputProps.endAdornment}
                                 </>
                             ),
