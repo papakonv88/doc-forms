@@ -115,13 +115,15 @@ function ReportBuilder() {
         const textValues = placeholderValues[selectedTextIndex] || {};
 
         // Normalize placeholders list into a map for consistent key lookup
-        const placeholderMap: Record<string, string[]> = Array.isArray(currentStory.placeholders)
-            ? (currentStory.placeholders as Array<{ title?: string; values?: string[] }>).reduce<Record<string, string[]>>((acc, p) => {
-                const k = String(p?.title ?? '').replace(/\s+/g, '');
-                acc[k] = p?.values ?? [];
-                return acc;
-            }, {})
-            : (currentStory.placeholders as unknown as Record<string, string[]>);
+        let placeholderMap: Record<string, string[]> = {};
+        if (Array.isArray(currentStory.placeholders)) {
+            for (const p of currentStory.placeholders) {
+                const k = String(p?.title || '').replace(/\s+/g, '');
+                placeholderMap[k] = p?.values || [];
+            }
+        } else {
+            placeholderMap = currentStory.placeholders as any;
+        }
 
         // Replace tokens in text by scanning for <...> and using normalized keys
         return String(text).replace(/<[^>]+>/g, (token) => {
