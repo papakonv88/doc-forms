@@ -116,11 +116,11 @@ function ReportBuilder() {
 
         // Normalize placeholders list into a map for consistent key lookup
         const placeholderMap: Record<string, string[]> = Array.isArray(currentStory.placeholders)
-            ? currentStory.placeholders.reduce((acc: Record<string, string[]>, p: any) => {
+            ? currentStory.placeholders.reduce((acc, p: any) => {
                 const k = String(p?.title || '').replace(/\s+/g, '');
                 acc[k] = p?.values || [];
                 return acc;
-            }, {})
+            }, {} as Record<string, string[]>)
             : currentStory.placeholders as any;
 
         // Replace tokens in text by scanning for <...> and using normalized keys
