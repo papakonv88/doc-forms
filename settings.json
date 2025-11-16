@@ -6,8 +6,8 @@
         "title": "onoma asthenous",
         "label": "Ονομα Ασθενούς",
         "type": "free",
-        "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^.+$",
+        "errorMsg": "Εισάγετε κείμενο",
+        "validator": ".*\\S.*",
         "required": true
       },
       {
@@ -15,8 +15,8 @@
         "title": "eponimo asthenous",
         "label": "Επώνυμο Ασθενούς",
         "type": "free",
-        "errorMsg": "Εισάγετε μια έγκυρη τιμή",
-        "validator": "^.+$",
+        "errorMsg": "Εισάγετε κείμενο",
+        "validator": ".*\\S.*",
         "required": true
       },
       {

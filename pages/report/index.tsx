@@ -26,12 +26,46 @@ import MessageVariants from "../../enums/MessageVariants";
 
 function ReportBuilder() {
     const report = useMemo(() => {
-        return Settings.doctor.report
-    }, [])
+        // Expand each story with "sections" into distinct sub-steps,
+        // so that every section becomes its own step with its own title and texts,
+        // while keeping metadata so we can show "sub-step" info in the UI.
+        const expanded: any[] = [];
+
+        for (const story of Settings.doctor.report as any[]) {
+            const hasSections = Array.isArray(story.sections) && story.sections.length > 0;
+            const hasDirectTexts = Array.isArray(story.texts) && story.texts.length > 0;
+
+            if (hasSections) {
+                const totalSections = story.sections.length;
+                story.sections.forEach((section: any, idx: number) => {
+                    expanded.push({
+                        // inherit base story fields that might be useful
+                        ...story,
+                        // override step-specific fields from section
+                        baseTitle: story.title,
+                        sectionTitle: section.title ?? story.title,
+                        sectionIndex: idx,
+                        totalSections,
+                        title: section.title ?? story.title,
+                        texts: section.texts ?? [],
+                        placeholders: section.placeholders ?? story.placeholders ?? [],
+                    });
+                });
+            } else if (hasDirectTexts) {
+                expanded.push(story);
+            } else {
+                // Fallback: push story as-is even if no texts, to avoid losing steps
+                expanded.push(story);
+            }
+        }
+
+        return expanded;
+    }, []);
     const {handleOpenSnackbar} = useAppContext();
     const [activeStep, setActiveStep] = useState(0);
-    const [selectedStoryTexts, setSelectedStoryTexts] = useState<string[]>(
-        report.map(() => "")
+    // Allow multiple selections per step: array of arrays of selected texts
+    const [selectedStoryTexts, setSelectedStoryTexts] = useState<string[][]>(
+        report.map(() => [])
     );
     const [useCustomText, setUseCustomText] = useState(false);
     const [customTexts, setCustomTexts] = useState(report.map(() => ""));
@@ -40,6 +74,29 @@ function ReportBuilder() {
 
     const currentStory = report[activeStep];
 
+    // Build dynamic styles for Stepper to show dotted connectors between sub-steps
+    const subStepConnectorStyles = useMemo(() => {
+        const styles: Record<string, any> = {};
+
+        report.forEach((item: any, index: number) => {
+            if (index === 0) return;
+            const currentIsSub = !!item.baseTitle;
+            const prev = report[index - 1] as any;
+            const prevIsSameGroup = !!prev?.baseTitle && prev.baseTitle === item.baseTitle;
+
+            // Connector index corresponds to the step after the connector,
+            // so we target nth-of-type(index) for the connector between prev and current.
+            if (currentIsSub && prevIsSameGroup) {
+                const selector = `& .MuiStepConnector-root:nth-of-type(${index}) .MuiStepConnector-line`;
+                styles[selector] = {
+                    borderTopStyle: 'dotted',
+                };
+            }
+        });
+
+        return styles;
+    }, [report]);
+
 
     console.log(selectedStoryTexts, 'selected store texts')
 
@@ -47,16 +104,48 @@ function ReportBuilder() {
     const router = useRouter();
     const {query} = router;
 
-    const handleStoryTextSelection = useCallback((event: React.ChangeEvent<HTMLInputElement>, storyIndex: number) => {
-        const selectedTextIndex = Number(event.target.value);
-        setSelectedStoryTexts((prev) => {
-            const newTexts = [...prev];
-            newTexts[storyIndex] = report[storyIndex].texts[selectedTextIndex];
-            return newTexts;
-        });
-    }, [selectedStoryTexts]);
+    const handleStoryTextSelection = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>, storyIndex: number, textIndex: number, isMulti: boolean) => {
+            const text = report[storyIndex].texts[textIndex];
+
+            // When user selects an option, clear any free-text for this step
+            setCustomTexts((prev) => {
+                const newTexts = [...prev];
+                newTexts[storyIndex] = "";
+                return newTexts;
+            });
+
+            setSelectedStoryTexts((prev) => {
+                const newSelections = [...prev];
+                const currentSelections = newSelections[storyIndex] || [];
+
+                // Keep only selections that are valid predefined texts for this step
+                const validTextsForStep = report[storyIndex].texts;
+                const baseSelections = currentSelections.filter((t) =>
+                    validTextsForStep.includes(t)
+                );
+
+                if (isMulti) {
+                    // Multi-select: toggle selection among predefined texts only
+                    if (baseSelections.includes(text)) {
+                        newSelections[storyIndex] = baseSelections.filter((t) => t !== text);
+                    } else {
+                        newSelections[storyIndex] = [...baseSelections, text];
+                    }
+                } else {
+                    // Single-select: replace with just this text
+                    newSelections[storyIndex] = [text];
+                }
+
+                return newSelections;
+            });
+        },
+        [report]
+    );
 
     const handleCustomTextToggle = () => {
+        // Simple toggle: keep any existing free-text content,
+        // so user can return to it later if they want.
         setUseCustomText((prev) => !prev);
     };
 
@@ -67,12 +156,13 @@ function ReportBuilder() {
             return newTexts;
         });
 
+        // For custom text, we keep selectedStoryTexts entry as a single-element array
         setSelectedStoryTexts((prev) => {
             const newTexts = [...prev];
-            newTexts[activeStep] = text;
+            newTexts[activeStep] = text ? [text] : [];
             return newTexts;
         });
-    }, [selectedStoryTexts, customTexts]);
+    }, [activeStep]);
 
     const handlePlaceholderChange = (textIndex: number, key: string, value: string) => {
         setPlaceholderValues(prev => ({
@@ -91,7 +181,11 @@ function ReportBuilder() {
     }
 
     const handleNextStep = () => {
-        const text = getProcessedText(selectedStoryTexts[activeStep]);
+        const currentSelections = selectedStoryTexts[activeStep] as any;
+        const combinedSelectedText = Array.isArray(currentSelections)
+            ? currentSelections.join("\n")
+            : (currentSelections || "");
+        const text = getProcessedText(combinedSelectedText);
         const regex = /\.\.\.\.\.\./;
         const isMatch = regex.test(text);
         if (isMatch && selectedStoryTexts[activeStep]) {
@@ -108,31 +202,38 @@ function ReportBuilder() {
 
 
 
-    const getProcessedText = (text: string) => {
-        if (!currentStory.placeholders) return text;
-
-        const selectedTextIndex = report[activeStep].texts.indexOf(text);
-        const textValues = placeholderValues[selectedTextIndex] || {};
+    const getProcessedText = (rawText: string) => {
+        if (!currentStory.placeholders) return rawText;
 
         // Normalize placeholders list into a map for consistent key lookup
         let placeholderMap: Record<string, string[]> = {};
         if (Array.isArray(currentStory.placeholders)) {
             for (const p of currentStory.placeholders) {
-                const k = String(p?.title || '').replace(/\s+/g, '');
+                const k = String(p?.title || "").replace(/\s+/g, "");
                 placeholderMap[k] = p?.values || [];
             }
         } else {
             placeholderMap = currentStory.placeholders as any;
         }
 
-        // Replace tokens in text by scanning for <...> and using normalized keys
-        return String(text).replace(/<[^>]+>/g, (token) => {
-            const rawKey = token.slice(1, -1);
-            const normalizedKey = rawKey.trim().replace(/\s+/g, '');
-            const value = textValues[normalizedKey] || '......';
-            // Only replace if it's a known placeholder; otherwise keep token
-            return placeholderMap[normalizedKey] ? value : token;
+        // When multiple templates are selected, rawText is a join of them.
+        // We process each original template separately (by index) using its own placeholderValues,
+        // then join them back together.
+        const segments = rawText.split("\n").filter(Boolean);
+
+        const processedSegments = segments.map((segment) => {
+            const selectedTextIndex = report[activeStep].texts.indexOf(segment);
+            const textValues = placeholderValues[selectedTextIndex] || {};
+
+            return String(segment).replace(/<[^>]+>/g, (token) => {
+                const rawKey = token.slice(1, -1);
+                const normalizedKey = rawKey.trim().replace(/\s+/g, "");
+                const value = textValues[normalizedKey] || "......";
+                return placeholderMap[normalizedKey] ? value : token;
+            });
         });
+
+        return processedSegments.join("\n");
     };
 
     return (
@@ -161,27 +262,47 @@ function ReportBuilder() {
                     <Typography variant="subtitle1" color="text.secondary">
                         Βήμα {activeStep + 1} από {report.length}
                     </Typography>
+                    {currentStory.baseTitle && (
+                        <Typography
+                            variant="subtitle1"
+                            color="text.secondary"
+                            sx={{mt: 1}}
+                        >
+                            Υποβήμα {currentStory.sectionIndex + 1} από {currentStory.totalSections} στην ενότητα:{" "}
+                            <strong>{currentStory.baseTitle}</strong>
+                        </Typography>
+                    )}
                 </Box>
 
-                <Stepper activeStep={activeStep} sx={{mb: 6}}>
-                    {report.map((_, index) => (
+                <Stepper
+                    activeStep={activeStep}
+                    sx={{
+                        mb: 6,
+                        '& .MuiStepConnector-line': {
+                            borderTopStyle: 'solid',
+                        },
+                        ...subStepConnectorStyles,
+                    }}
+                >
+                    {report.map((storyItem: any, index) => (
                         <Step key={index}>
-                            <StepLabel></StepLabel>
+                            <StepLabel>
+                                {index + 1}
+                            </StepLabel>
                         </Step>
                     ))}
                 </Stepper>
 
-                <Typography variant="h6" sx={{mb: 3}}>
-                    {`${activeStep + 1}. ${currentStory.title}`}
+                <Typography variant="h6" sx={{mb: 1}}>
+                    {currentStory.baseTitle || currentStory.title}
                 </Typography>
+                {currentStory.baseTitle && (
+                    <Typography variant="subtitle1" sx={{mb: 3}}>
+                        {currentStory.sectionTitle}
+                    </Typography>
+                )}
 
                 <Paper elevation={3} sx={{p: 4, mb: 4}}>
-                    <Box sx={{display: "flex", justifyContent: "flex-end", mb: 6}}>
-                        <Button variant="outlined" onClick={handleCustomTextToggle}>
-                            {useCustomText ? "Επιλογες" : "Ελευθερο Κειμενο"}
-                        </Button>
-                    </Box>
-
                     {useCustomText ? (
                         <TextField
                             fullWidth
@@ -197,7 +318,8 @@ function ReportBuilder() {
                                              selectedStoryTexts={selectedStoryTexts}
                                              handlePlaceholderChange={handlePlaceholderChange}
                                              handleStoryTextSelection={handleStoryTextSelection}
-                                             placeholderValues={placeholderValues}/>
+                                             placeholderValues={placeholderValues}
+                                             isMulti={activeStep !== 0}/>
                         </Box>
                     )}
 
@@ -206,11 +328,17 @@ function ReportBuilder() {
                         Επιλεγμένο κείμενο:
                     </Typography>
                     <Typography sx={{mt: 1, whiteSpace: "pre-line"}}>
-                        {getProcessedText(selectedStoryTexts[activeStep]) || "-"}
+                        {(() => {
+                            const currentSelections = selectedStoryTexts[activeStep] as any;
+                            const combinedSelectedText = Array.isArray(currentSelections)
+                                ? currentSelections.join("\n")
+                                : (currentSelections || "");
+                            return getProcessedText(combinedSelectedText) || "-";
+                        })()}
                     </Typography>
                 </Paper>
 
-                <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2}}>
                     <Button
                         variant="outlined"
                         onClick={() => {
@@ -222,13 +350,18 @@ function ReportBuilder() {
                     >
                         Προηγουμενο
                     </Button>
-                    <Button
-                        variant="contained"
-                        onClick={handleNextStep}
-                        endIcon={activeStep === report.length - 1 ? <CheckIcon/> : <ChevronRightIcon/>}
-                    >
-                        {activeStep === report.length - 1 ? "Υποβολη" : "Επομενο"}
-                    </Button>
+                    <Box sx={{display: "flex", columnGap: 2}}>
+                        <Button variant="outlined" onClick={handleCustomTextToggle}>
+                            {useCustomText ? "Επιλογες" : "Ελευθερο Κειμενο"}
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={handleNextStep}
+                            endIcon={activeStep === report.length - 1 ? <CheckIcon/> : <ChevronRightIcon/>}
+                        >
+                            {activeStep === report.length - 1 ? "Υποβολη" : "Επομενο"}
+                        </Button>
+                    </Box>
                 </Box>
             </SectionContainer>
         </PageContainer>

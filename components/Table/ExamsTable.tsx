@@ -47,8 +47,8 @@ function ExamsTable({exams}: any) {
         const filtered = exams.filter((row: any) =>
             Object.values({
                 ...row,
-                ...row.patient,
-                aitia_eksetasis: row.aitia_eksetasis.string, // Include nested fields
+                ...(row.patient ?? {}),
+                aitia_eksetasis: row.aitia_eksetasis?.string ?? '', // Include nested fields
             })
                 .join(" ")
                 .toLowerCase()
@@ -234,16 +234,16 @@ function ExamsTable({exams}: any) {
                                     {validateText(row.aitia_eksetasis.string)}
                                 </TableCell>
                                 <TableCell sx={{ py: 2, fontWeight: 500 }}>
-                                    {validateText(row.patient.name)}
+                                    {validateText(row.patient?.name)}
                                 </TableCell>
                                 <TableCell sx={{ py: 2, fontWeight: 500 }}>
-                                    {validateText(row.patient.surname)}
+                                    {validateText(row.patient?.surname)}
                                 </TableCell>
                                 <TableCell sx={{ py: 2 }}>
-                                    {validateText(row.patient.patronimo)}
+                                    {validateText(row.patient?.patronimo)}
                                 </TableCell>
                                 <TableCell sx={{ py: 2, fontFamily: 'monospace' }}>
-                                    {validateText(row.patient.amka)}
+                                    {validateText(row.patient?.amka)}
                                 </TableCell>
                                 <TableCell sx={{ py: 2 }}>
                                     <IconButton
