@@ -8,6 +8,7 @@ import InputType from "../../enums/InputTypes";
 import FreeText from "../FreeText/FreeText";
 import * as React from "react";
 import MultipleSelect from "../MultipleSelect/MultipleSelect";
+import MedicationList from "../MedicationList/MedicationList";
 
 type ValueType = InputProps['value'];
 
@@ -44,6 +45,19 @@ function AddExam({exam, handleValuesChange, formValues, errors, handleError}: Ad
                                          isDepended={Boolean(element?.dependsOn)}
                                          dependsOn={formValues[element?.dependsOn?.propertyName] !== element?.dependsOn?.value && Boolean(formValues[element?.dependsOn?.propertyName])}
                                          handleError={handleError}/>
+                    }
+                    if (element.type === InputType.MEDICATION_LIST) {
+                        return <MedicationList key={`${element.propertyName}_${idx}`}
+                                               options={element.values}
+                                               property={element.propertyName}
+                                               handleChange={handleValuesChange}
+                                               value={formValues[element.propertyName as keyof FormValuesPatient]}
+                                               label={element.label}
+                                               errorMsg={element.errorMsg}
+                                               error={errors[element.propertyName as keyof FormValuesPatient]}
+                                               required={element.required}
+                                               handleError={handleError}
+                        />
                     }
                     if (element.type === InputType.DROPDOWN_WITH_RADIO) {
                         return <DropDownWithRadio key={`${element.propertyName}_${idx}`} title={element.title}

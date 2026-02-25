@@ -47,7 +47,7 @@ function ExamDetails(exam: any) {
                             <strong>Παραπομπή:</strong> {validateText(exam.parapombi)}
                         </Typography>
                         <Typography>
-                            <strong>Αντισπασμωδική Αγωγή:</strong>{" "}
+                            <strong>Αντικρισική Αγωγή:</strong>{" "}
                             {validateText(exam.antispasmodiki_agogi)}
                         </Typography>
                         <Typography>

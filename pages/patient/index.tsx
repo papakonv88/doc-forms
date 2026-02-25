@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import Settings from './../../settings.json';
 import SectionContainer from "../../components/Containers/SectionContainer/SectionContainer";
 import AddPatient from "../../components/AddPatient/AddPatient";
@@ -142,23 +142,23 @@ function Patient() {
         });
     };
 
-    const handleDialog = (bool: boolean) => {
+    const handleDialog = useCallback((bool: boolean) => {
         setOpenDialog(bool);
-    };
+    }, []);
 
-    const handleError = (value: boolean, propertyName: string) => {
-        setErrors({
-            ...errors,
+    const handleError = useCallback((value: boolean, propertyName: string) => {
+        setErrors((prev) => ({
+            ...prev,
             [propertyName]: value
-        });
-    }
+        }));
+    }, []);
 
-    const getPatients = async (query: string) => {
+    const getPatients = useCallback(async (query: string) => {
         const res = await axios.get('/api/searchPatient', {
             params: {q: query},
         });
         return res.data;
-    }
+    }, []);
 
     const retrievePatient = (info: any) => {
         let newFormValues: any = {}
@@ -192,12 +192,19 @@ function Patient() {
     const {validate: validateExam} = useErrorPayload(formValues, exam);
 
 
-    const handleValuesChange = (value: ValueType, propertyName: string) => {
-        setFormValues({
-            ...formValues,
-            [propertyName]: value
+    const handleValuesChange = useCallback((value: ValueType, propertyName: string) => {
+        setFormValues((prev) => {
+            // Αποφυγή περιττών updates αν η τιμή δεν αλλάζει
+            // @ts-ignore
+            if (prev[propertyName] === value) {
+                return prev;
+            }
+            return {
+                ...prev,
+                [propertyName]: value
+            };
         });
-    }
+    }, []);
 
     const handlePatchPatient = async (id: string) => {
         try {
