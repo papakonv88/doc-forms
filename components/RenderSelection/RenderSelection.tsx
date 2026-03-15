@@ -1,14 +1,14 @@
-import {Checkbox, Divider, FormControlLabel, Radio, RadioGroup} from "@mui/material";
+import {Box, Checkbox, Divider, FormControlLabel, Radio, RadioGroup} from "@mui/material";
 import TextWithPlaceholders from "../TextWithPlaceholder/TextWithPlaceholders";
 import {useMemo} from "react";
 
 function RenderSelection ({story, index, selectedStoryTexts, handlePlaceholderChange, handleStoryTextSelection, placeholderValues, isMulti}) {
     const placeholderMap = useMemo(() => {
         if (!Array.isArray(story.placeholders)) return story.placeholders || {};
-        const map: Record<string, string[]> = {};
-        story.placeholders.forEach((p: { title?: string; values?: string[] }) => {
+        const map: Record<string, { values: string[]; allowFreeText?: boolean; multiple?: boolean }> = {};
+        story.placeholders.forEach((p: { title?: string; values?: string[]; allowFreeText?: boolean; multiple?: boolean }) => {
             const key = (p?.title || "").replace(/\s+/g, "");
-            map[key] = p?.values || [];
+            map[key] = { values: p?.values || [], allowFreeText: p?.allowFreeText === true, multiple: p?.multiple === true };
         });
         return map;
     }, [story.placeholders]);
@@ -58,23 +58,27 @@ function RenderSelection ({story, index, selectedStoryTexts, handlePlaceholderCh
         );
     }
 
-    // Multi-select mode: use Checkboxes
+    // Multi-select mode: use Checkboxes (only the checkbox toggles on click, not the container)
     return (
         <>
             {story.texts.map((text, textIndex) => {
                 const isChecked = selectedArray.includes(text);
                 return (
-                    <>
-                        <FormControlLabel
-                            key={textIndex}
-                            control={
-                                <Checkbox
-                                    checked={isChecked}
-                                    onChange={(e) => handleStoryTextSelection(e, index, textIndex, true)}
-                                />
-                            }
-                            label={
-                                story.placeholders ? (
+                    <Box key={textIndex}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                padding: 2,
+                                columnGap: 2,
+                            }}
+                        >
+                            <Checkbox
+                                checked={isChecked}
+                                onChange={(e) => handleStoryTextSelection(e, index, textIndex, true)}
+                            />
+                            <Box sx={{ flex: 1, pt: 0.5 }}>
+                                {story.placeholders ? (
                                     <TextWithPlaceholders
                                         text={text}
                                         textIndex={textIndex}
@@ -84,19 +88,11 @@ function RenderSelection ({story, index, selectedStoryTexts, handlePlaceholderCh
                                     />
                                 ) : (
                                     text
-                                )
-                            }
-                            sx={{
-                                padding: 2,
-                                alignItems: 'center',
-                                columnGap: 2,
-                                '.MuiFormControlLabel-label': {
-                                    pt: 1
-                                }
-                            }}
-                        />
+                                )}
+                            </Box>
+                        </Box>
                         {(textIndex !== story.texts.length - 1) && <Divider sx={{ padding: '10px 0' }}/>}
-                    </>
+                    </Box>
                 );
             })}
         </>
