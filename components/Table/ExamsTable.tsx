@@ -25,7 +25,7 @@ function ExamsTable({exams}: any) {
     const [search, setSearch] = useState(""); // Search state
     const [filteredData, setFilteredData] = useState(exams); // Filtered data state
     const [page, setPage] = useState(0); // Current page
-    const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
+    const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
     const [anchorEl, setAnchorEl] = useState(null); // Anchor for menu
     const [selectedRowId, setSelectedRowId] = useState(null); // Track selected row
     const router = useRouter();
