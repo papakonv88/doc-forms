@@ -1,6 +1,7 @@
 import {Autocomplete, Box, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 
 const MULTI_VALUE_SEP = ", ";
+const FREE_TEXT_INPUT_PLACEHOLDER = "Γράψτε εδώ...";
 
 type PlaceholderEntry = { values: string[]; allowFreeText?: boolean; multiple?: boolean };
 
@@ -20,6 +21,16 @@ function getOptions(entry: string[] | PlaceholderEntry | undefined): string[] {
 function getAllowFreeText(entry: string[] | PlaceholderEntry | undefined): boolean {
     if (!entry || Array.isArray(entry)) return false;
     return entry.allowFreeText === true;
+}
+
+/** When there is no preset list, treat the slot as free text (unless explicitly disabled later). */
+function getEffectiveFreeText(
+    entry: string[] | PlaceholderEntry | undefined,
+    options: string[]
+): boolean {
+    if (entry == null) return false;
+    if (getAllowFreeText(entry)) return true;
+    return options.length === 0;
 }
 
 function getMultiple(entry: string[] | PlaceholderEntry | undefined): boolean {
@@ -49,9 +60,9 @@ function TextWithPlaceholders({text, textIndex, placeholders, values, onChange}:
                     const normalizedKey = rawKey.trim().replace(/\s+/g, "");
                     const entry = placeholders[normalizedKey];
                     const options = getOptions(entry);
-                    const allowFreeText = getAllowFreeText(entry);
+                    const allowFreeText = getEffectiveFreeText(entry, options);
                     const multiple = getMultiple(entry);
-                    if (options.length > 0 || allowFreeText) {
+                    if (entry != null && (options.length > 0 || allowFreeText)) {
                         const value = textValues[normalizedKey] || "";
                         if (multiple) {
                             const selected = parseMultiValue(value);
@@ -59,6 +70,7 @@ function TextWithPlaceholders({text, textIndex, placeholders, values, onChange}:
                                 <Autocomplete
                                     key={index}
                                     multiple
+                                    freeSolo={options.length === 0}
                                     options={options}
                                     value={selected}
                                     onChange={(_, newValue) => onChange(textIndex, normalizedKey, formatMultiValue(newValue as string[]))}
@@ -67,7 +79,8 @@ function TextWithPlaceholders({text, textIndex, placeholders, values, onChange}:
                                             {...params}
                                             variant="outlined"
                                             size="small"
-                                            label="Επιλογή"
+                                            label={options.length === 0 ? "Κείμενο" : "Επιλογή"}
+                                            placeholder={options.length === 0 ? FREE_TEXT_INPUT_PLACEHOLDER : undefined}
                                             sx={{minWidth: 200}}
                                         />
                                     )}
@@ -89,7 +102,8 @@ function TextWithPlaceholders({text, textIndex, placeholders, values, onChange}:
                                             {...params}
                                             variant="outlined"
                                             size="small"
-                                            label="Επιλογή"
+                                            label={options.length === 0 ? "Κείμενο" : "Επιλογή"}
+                                            placeholder={options.length === 0 ? FREE_TEXT_INPUT_PLACEHOLDER : undefined}
                                             sx={{minWidth: 180}}
                                         />
                                     )}

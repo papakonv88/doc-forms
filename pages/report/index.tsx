@@ -69,7 +69,9 @@ function ReportBuilder() {
     );
     const [useCustomText, setUseCustomText] = useState(false);
     const [customTexts, setCustomTexts] = useState(report.map(() => ""));
-    const [placeholderValues, setPlaceholderValues] = useState<Record<number, Record<string, string>>>({});
+    const [placeholderValues, setPlaceholderValues] = useState<
+        Record<number, Record<number, Record<string, string>>>
+    >({});
     const [finalSelection, setFinalSelection] = useState([])
 
     const currentStory = report[activeStep];
@@ -144,8 +146,19 @@ function ReportBuilder() {
     );
 
     const handleCustomTextToggle = () => {
-        // Simple toggle: keep any existing free-text content,
-        // so user can return to it later if they want.
+        if (!useCustomText) {
+            setSelectedStoryTexts((sts) => {
+                const copy = [...sts];
+                copy[activeStep] = [];
+                return copy;
+            });
+            setPlaceholderValues((pv) => {
+                if (pv[activeStep] == null) return pv;
+                const next = {...pv};
+                delete next[activeStep];
+                return next;
+            });
+        }
         setUseCustomText((prev) => !prev);
     };
 
@@ -165,12 +178,15 @@ function ReportBuilder() {
     }, [activeStep]);
 
     const handlePlaceholderChange = (textIndex: number, key: string, value: string) => {
-        setPlaceholderValues(prev => ({
+        setPlaceholderValues((prev) => ({
             ...prev,
-            [textIndex]: {
-                ...(prev[textIndex] || {}),
-                [key]: value
-            }
+            [activeStep]: {
+                ...(prev[activeStep] || {}),
+                [textIndex]: {
+                    ...((prev[activeStep] || {})[textIndex] || {}),
+                    [key]: value,
+                },
+            },
         }));
     };
 
@@ -223,7 +239,7 @@ function ReportBuilder() {
 
         const processedSegments = segments.map((segment) => {
             const selectedTextIndex = report[activeStep].texts.indexOf(segment);
-            const textValues = placeholderValues[selectedTextIndex] || {};
+            const textValues = placeholderValues[activeStep]?.[selectedTextIndex] || {};
 
             return String(segment).replace(/<[^>]+>/g, (token) => {
                 const rawKey = token.slice(1, -1);
@@ -318,7 +334,7 @@ function ReportBuilder() {
                                              selectedStoryTexts={selectedStoryTexts}
                                              handlePlaceholderChange={handlePlaceholderChange}
                                              handleStoryTextSelection={handleStoryTextSelection}
-                                             placeholderValues={placeholderValues}
+                                             placeholderValues={placeholderValues[activeStep] ?? {}}
                                              isMulti={activeStep !== 0}/>
                         </Box>
                     )}
