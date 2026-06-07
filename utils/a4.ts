@@ -6,7 +6,7 @@ export function mmToPx(mm: number): number {
     return mm * (96 / 25.4);
 }
 
-export function getA4PageCount(contentHeightPx: number): number {
-    if (contentHeightPx <= 0) return 1;
-    return Math.max(1, Math.ceil(contentHeightPx / mmToPx(A4_HEIGHT_MM)));
+export function getA4PageCount(contentHeightPx: number, pageHeightPx = mmToPx(A4_HEIGHT_MM)): number {
+    if (contentHeightPx <= 0 || pageHeightPx <= 0) return 1;
+    return Math.max(1, Math.ceil(contentHeightPx / pageHeightPx));
 }

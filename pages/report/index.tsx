@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {saveReportDraftNow, useReportDraft} from "../../hooks/useReportDraft";
 import {
-    clearReportDraft,
     createEmptyReportDraftState,
     getInitialReportDraftState,
     isValidExamId,
@@ -32,6 +31,12 @@ import A4PagePreview from "../../components/ReportTemplate/A4PagePreview";
 import {DrawingTool} from "../../components/ReportTemplate/ReportDrawingCanvas";
 import ReportDrawingToolbar from "../../components/ReportTemplate/ReportDrawingToolbar";
 import ReportDocumentTemplate, {ReportImageSize, ReportPatientInfo} from "../../components/ReportTemplate/ReportDocumentTemplate";
+import {ReportDocumentBodyHandle} from "../../components/ReportTemplate/ReportDocumentBody";
+import {
+    mapApiExamToReportDetails,
+    reportDetailsToPatientInfo,
+    ReportExamDetails,
+} from "../../components/ReportTemplate/ReportExamDetailsSection";
 import {useRouter} from "next/router";
 import Settings from "../../settings.json";
 import RenderSelection from "../../components/RenderSelection/RenderSelection";
@@ -95,6 +100,7 @@ function ReportBuilder() {
     const [finalDocument, setFinalDocument] = useState("");
     const [isExportingPdf, setIsExportingPdf] = useState(false);
     const pdfContentRef = useRef<HTMLDivElement>(null);
+    const bodyEditorRef = useRef<ReportDocumentBodyHandle>(null);
     const hydratedExamRef = useRef<string | null>(null);
 
     const [selectedStoryTexts, setSelectedStoryTexts] = useState<string[][]>([]);
@@ -110,9 +116,23 @@ function ReportBuilder() {
     const [drawingLineWidth, setDrawingLineWidth] = useState(3);
     const [drawingDataUrl, setDrawingDataUrl] = useState("");
     const [eegDiagramSize, setEegDiagramSize] = useState<ReportImageSize | null>(null);
-    const [patientInfo, setPatientInfo] = useState<ReportPatientInfo | null>(null);
+    const [examDetails, setExamDetails] = useState<ReportExamDetails | null>(null);
+
+    const patientInfo = useMemo<ReportPatientInfo | null>(() => {
+        if (!examDetails) return null;
+        return reportDetailsToPatientInfo(examDetails);
+    }, [examDetails]);
 
     const useCustomText = useCustomTextByStep[activeStep] ?? false;
+
+    const isFreeTextOnlyStep = useMemo(() => {
+        return report.map((story: any) => {
+            const texts = story.texts;
+            return !Array.isArray(texts) || texts.length === 0;
+        });
+    }, [report]);
+
+    const showCustomText = isFreeTextOnlyStep[activeStep] || useCustomText;
 
     const applyDraftState = useCallback((draft: ReportDraftState) => {
         setActiveStep(draft.activeStep);
@@ -186,18 +206,9 @@ function ReportBuilder() {
                 const {data} = await axios.get(`/api/getExam?id=${encodeURIComponent(examId)}`);
                 if (cancelled) return;
 
-                const patient = data?.patient;
-                const fullName = [patient?.surname, patient?.name, patient?.patronimo]
-                    .map((part) => (typeof part === "string" ? part.trim() : ""))
-                    .filter(Boolean)
-                    .join(" ");
-
-                setPatientInfo({
-                    fullName,
-                    amka: typeof patient?.amka === "string" ? patient.amka : "",
-                });
+                setExamDetails(mapApiExamToReportDetails(data));
             } catch {
-                if (!cancelled) setPatientInfo(null);
+                if (!cancelled) setExamDetails(null);
             }
         })();
 
@@ -440,14 +451,13 @@ function ReportBuilder() {
         const element = pdfContentRef.current;
         if (!element) return;
 
+        const latestDocument = bodyEditorRef.current?.flushEdits() ?? finalDocument;
+        persistDraft({isReviewMode: true, finalDocument: latestDocument});
+
         setIsExportingPdf(true);
         try {
             await exportElementToPdf(element, `porisma-${examId}.pdf`);
-            clearReportDraft(examId);
-            applyDraftState(createEmptyReportDraftState(report.length));
-            setIsReviewMode(false);
-            setActiveStep(0);
-            handleOpenSnackbar("Το PDF εξήχθη επιτυχώς", MessageVariants.SUCCESS);
+            handleOpenSnackbar("Το PDF αποθηκέυτηκε επιτυχώς", MessageVariants.SUCCESS);
         } catch {
             handleOpenSnackbar("Αποτυχία εξαγωγής PDF", MessageVariants.ERROR);
         } finally {
@@ -538,10 +548,12 @@ function ReportBuilder() {
                         <A4PagePreview>
                             <ReportDocumentTemplate
                                 ref={pdfContentRef}
+                                bodyEditorRef={bodyEditorRef}
                                 body={finalDocument}
                                 onBodyChange={setFinalDocument}
                                 editable
                                 patient={patientInfo}
+                                examDetails={examDetails}
                                 eegDiagramSize={eegDiagramSize}
                                 onEegDiagramSizeChange={setEegDiagramSize}
                                 drawing={{
@@ -573,6 +585,7 @@ function ReportBuilder() {
                             Πισω
                         </Button>
                         <Button
+                            type="button"
                             variant="contained"
                             onClick={handleExportPdf}
                             disabled={isExportingPdf || !finalDocument.trim()}
@@ -625,12 +638,12 @@ function ReportBuilder() {
                 )}
 
                 <Paper elevation={3} sx={{p: 4, mb: 4}}>
-                    {useCustomText ? (
+                    {showCustomText ? (
                         <TextField
                             fullWidth
                             multiline
-                            rows={4}
-                            value={customTexts[activeStep]}
+                            rows={isFreeTextOnlyStep[activeStep] ? 8 : 4}
+                            value={customTexts[activeStep] ?? ""}
                             onChange={(e) => handleCustomTextChange(e.target.value)}
                             placeholder="Γράψτε το κείμενο σας εδώ..."
                         />
@@ -671,9 +684,11 @@ function ReportBuilder() {
                         Προηγουμενο
                     </Button>
                     <Box sx={{display: "flex", columnGap: 2}}>
-                        <Button variant="outlined" onClick={handleCustomTextToggle}>
+                        {!isFreeTextOnlyStep[activeStep] && (
+                            <Button variant="outlined" onClick={handleCustomTextToggle}>
                             {useCustomText ? "Επιλογες" : "Ελευθερο Κειμενο"}
                         </Button>
+                        )}
                         <Button
                             variant="contained"
                             onClick={handleNextStep}

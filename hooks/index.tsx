@@ -1,11 +1,31 @@
 import {useCallback} from 'react';
 import InputTypes from "../enums/InputTypes";
 
+function isFieldEmpty(value: unknown, type: string): boolean {
+    if (value == null) return true;
+
+    if (type === InputTypes.TOGGLE_BUTTON || type === InputTypes.DROPDOWN_WITH_RADIO) {
+        const nested = value as {radio?: string; string?: string};
+        return !nested.radio?.trim() && !nested.string?.trim();
+    }
+
+    if (typeof value === "string") {
+        return !value.trim();
+    }
+
+    return false;
+}
+
 export const useErrorPayload = (formValues: any, types: any) => {
 
     const validate = useCallback(() => {
         let newErrors: any = {};
         for (const type of types) {
+            if (!type.required && isFieldEmpty(formValues[type.propertyName], type.type)) {
+                newErrors[type.propertyName] = false;
+                continue;
+            }
+
             const validator = new RegExp(type?.validator);
             if (type.type === InputTypes.TOGGLE_BUTTON || type.type === InputTypes.DROPDOWN_WITH_RADIO) {
                 let isNested = false;

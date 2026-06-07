@@ -6,7 +6,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (req.method) {
         case 'GET':
              // @ts-ignore
-             const examsAll = await Exam.find().populate({path: 'patient', model: Patient})
+             const examsAll = await Exam.find()
+                 .populate({path: 'patient', model: Patient})
+                 .sort({imerominia_katagrafis: -1});
              res.status(200).json(examsAll);
              break;
         default:

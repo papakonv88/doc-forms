@@ -39,31 +39,31 @@ interface Exam extends Document {
 }
 
 const NewExamSchema = new mongoose.Schema({
-    imerominia_katagrafis: {type: Date, required: true},
+    imerominia_katagrafis: {type: Date},
     endeiksi_heg: {
         radio: String,
         string: String
     },
-    typos_katagrafis: {type: String, required: true},
-    parapombi: {type: String, required: true},
+    typos_katagrafis: {type: String, default: '-'},
+    parapombi: {type: String, default: '-'},
     aitia_eksetasis: {
         radio: String,
         string: String
     },
-    antispasmodiki_agogi: {type: String, required: true},
+    antispasmodiki_agogi: {type: String, default: '-'},
     alli_agogi: {type: String, default: '-'},
-    kraniotomi_plagiosi: {type: String, required: true},
-    kraniotomi_entopisi: {type: String, required: true},
-    topothetisi_ilektrodion: {type: String, required: true},
+    kraniotomi_plagiosi: {type: String, default: '-'},
+    kraniotomi_entopisi: {type: String, default: '-'},
+    topothetisi_ilektrodion: {type: String, default: '-'},
     diarkeia_katagrafis: {
         radio: String,
         string: String
     },
-    epipedo_syneidisis: {type: String, required: true},
-    synergasia: {type: String, required: true},
-    yperpnoia_xronos: {type: String, required: true},
+    epipedo_syneidisis: {type: String, default: '-'},
+    synergasia: {type: String, default: '-'},
+    yperpnoia_xronos: {type: String, default: '-'},
     yperpnoia_prospatheia: {type: String, default: '-'},
-    dfe: {type: String, required: true},
+    dfe: {type: String, default: '-'},
     patient: {type: mongoose.Schema.Types.ObjectId, ref: 'NewPatient', required: true}
 }, {timestamps: true});
 

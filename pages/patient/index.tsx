@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Settings from './../../settings.json';
 import SectionContainer from "../../components/Containers/SectionContainer/SectionContainer";
 import AddPatient from "../../components/AddPatient/AddPatient";
@@ -82,6 +82,8 @@ function Patient() {
 
     const router = useRouter();
     const [openDialog, setOpenDialog] = useState(false);
+    const isDialogActionRunningRef = useRef(false);
+    const isSavingExamRef = useRef(false);
 
     const resetForm = () => {
         setFormValues({
@@ -242,22 +244,25 @@ function Patient() {
     }
 
     const handleInsertExam = async () => {
+        if (isSavingExamRef.current) return;
+
+        isSavingExamRef.current = true;
         try {
             handleLoader(true);
             const {name, surname, patronimo, amka, imerominia_genisis, ...rest} = formValues;
             await saveExam({
                 ...rest,
                 patient: patientUId,
-            })
-            handleOpenSnackbar('Πραγματοποιήθηκε η εισαγωγή της νέας εξέτασης', MessageVariants.SUCCESS)
-            handleCloseConfirmDialog();
-            await router.push('/');
+            });
+            handleOpenSnackbar("Πραγματοποιήθηκε η εισαγωγή της νέας εξέτασης", MessageVariants.SUCCESS);
+            await router.push("/");
         } catch (e) {
-            handleOpenSnackbar('Σφάλμα κατά την εισαγωγή της νέας εξέτασης', MessageVariants.ERROR)
+            handleOpenSnackbar("Σφάλμα κατά την εισαγωγή της νέας εξέτασης", MessageVariants.ERROR);
         } finally {
             handleLoader(false);
+            isSavingExamRef.current = false;
         }
-    }
+    };
 
     const handleDeletePatient = async () => {
         try {
@@ -307,48 +312,52 @@ function Patient() {
             if (patient?._id) {
                 setPatientUId(patient?._id)
                 handleOpenConfirmDialog({
-                    mode: 'edit',
+                    mode: "edit",
                     open: true,
-                    message: 'Το ΑΜΚΑ του εν λόγω ασθενούς υπάρχει ήδη στη βάση δεδομένων. Εάν έχετε τροποποιήσει κάποια στοιχεία του ασθενούς, αυτή η αλλαγή θα αποθηκευτεί στη βάση δεδομένων, είστε σίγουροι ότι θέλετε να προχωρήσετε;',
-                    title: 'Ενημέρωση Στοιχείων Ασθενούς',
-                    result: true
-                })
-                handleLoader(false)
-                if (!dialog.result) return;
+                    message: "Το ΑΜΚΑ του εν λόγω ασθενούς υπάρχει ήδη στη βάση δεδομένων. Εάν έχετε τροποποιήσει κάποια στοιχεία του ασθενούς, αυτή η αλλαγή θα αποθηκευτεί στη βάση δεδομένων, είστε σίγουροι ότι θέλετε να προχωρήσετε;",
+                    title: "Ενημέρωση Στοιχείων Ασθενούς",
+                    result: true,
+                });
             } else {
                 handleOpenConfirmDialog({
-                    mode: 'create',
+                    mode: "create",
                     open: true,
-                    message: 'Είστε σίγουροι ότι θέλετε να προχωρήσετε στην εισαγωγή του νέου ασθενούς στην βάση δεδομένων;',
-                    title: 'Εισαγωγή Στοιχείων Ασθενούς',
-                    result: true
-                })
-                handleLoader(false)
-                if (!dialog.result) return;
+                    message: "Είστε σίγουροι ότι θέλετε να προχωρήσετε στην εισαγωγή του νέου ασθενούς στην βάση δεδομένων;",
+                    title: "Εισαγωγή Στοιχείων Ασθενούς",
+                    result: true,
+                });
             }
         } catch (e) {
-            handleLoader(false)
-            handleOpenSnackbar('Σφάλμα κατά την αποθήκευση', MessageVariants.ERROR)
+            handleOpenSnackbar("Σφάλμα κατά την αποθήκευση", MessageVariants.ERROR);
         } finally {
-            handleLoader(false)
+            handleLoader(false);
         }
-    }
+    };
 
     const handleBack = () => {
         setActiveStep((prevStep) => prevStep - 1);
     };
 
     const handleDialogAction = async (mode: string) => {
-        if (mode === 'edit') {
-            await handlePatchPatient(patientUId)
-        } else if (mode === 'exam') {
-            await handleInsertExam();
-        } else if (mode === 'delete') {
-            await handleDeletePatient();
-        } else {
-            await handleInsertPatient();
+        if (isDialogActionRunningRef.current) return;
+
+        isDialogActionRunningRef.current = true;
+        handleCloseConfirmDialog();
+
+        try {
+            if (mode === "edit") {
+                await handlePatchPatient(patientUId);
+            } else if (mode === "exam") {
+                await handleInsertExam();
+            } else if (mode === "delete") {
+                await handleDeletePatient();
+            } else {
+                await handleInsertPatient();
+            }
+        } finally {
+            isDialogActionRunningRef.current = false;
         }
-    }
+    };
 
     const handleDelete = () => {
         handleLoader(true)
@@ -374,21 +383,18 @@ function Patient() {
             }
             handleLoader(true)
             handleOpenConfirmDialog({
-                mode: 'exam',
+                mode: "exam",
                 open: true,
-                message: 'Eίστε σίγουροι ότι θέλετε να προχωρήσετε στην αποθήκευση της εξέτασης;',
-                title: 'Νέα Εξέταση',
-                result: true
-            })
-            handleLoader(false)
-            if (!dialog.result) return;
+                message: "Eίστε σίγουροι ότι θέλετε να προχωρήσετε στην αποθήκευση της εξέτασης;",
+                title: "Νέα Εξέταση",
+                result: true,
+            });
         } catch (e) {
-            handleLoader(false)
-            handleOpenSnackbar('Σφάλμα κατά την αποθήκευση της εξέτασης', MessageVariants.ERROR)
+            handleOpenSnackbar("Σφάλμα κατά την αποθήκευση της εξέτασης", MessageVariants.ERROR);
         } finally {
-            handleLoader(false)
+            handleLoader(false);
         }
-    }
+    };
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -450,8 +456,9 @@ function Patient() {
                             >
                                 Πισω
                             </Button>
-                            <Button 
-                                onClick={handleExamSubmit} 
+                            <Button
+                                type="button"
+                                onClick={handleExamSubmit}
                                 variant="contained"
                                 disabled={isLoading}
                             >

@@ -6,8 +6,8 @@ function ExamDetails(exam: any) {
     return (
         <Container maxWidth="lg" sx={{padding: 3, marginTop: 3}}>
             <Grid container spacing={4}>
-                <Grid item xs={12} sx={{marginBottom: 4}}>
-                    <Stack spacing={2}>
+                <Grid item xs={12} md={6}>
+                    <Stack spacing={2} sx={{height: "100%"}}>
                         <Typography variant="h6">Στοιχεία Ασθενούς</Typography>
                         <Divider/>
                         <Typography>
@@ -29,8 +29,8 @@ function ExamDetails(exam: any) {
                     </Stack>
                 </Grid>
 
-                <Grid item xs={12}>
-                    <Stack spacing={2}>
+                <Grid item xs={12} md={6}>
+                    <Stack spacing={2} sx={{height: "100%"}}>
                         <Typography variant="h6">Στοιχεία Εξέτασης</Typography>
                         <Divider/>
                         <Typography>

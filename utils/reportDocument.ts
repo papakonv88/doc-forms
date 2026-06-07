@@ -55,18 +55,109 @@ export function getStepTitle(story: ReportStep): string {
     return story.sectionTitle || story.title || story.baseTitle || "";
 }
 
+const MERGED_SUBSECTION_BASE_TITLES = new Set(["υπνηλία και ύπνος"]);
+
+const MERGED_SECTION_DISPLAY_TITLES: Record<string, string> = {
+    "υπνηλία και ύπνος": "Υπνηλία και Ύπνος",
+};
+
+function normalizeTitleKey(title: string): string {
+    return title.trim().toLocaleLowerCase("el-GR");
+}
+
+export function normalizeSectionTitle(title: string): string {
+    const trimmed = title.trim();
+    if (!trimmed) return trimmed;
+    return MERGED_SECTION_DISPLAY_TITLES[normalizeTitleKey(trimmed)] ?? trimmed;
+}
+
+function getMergedSectionTitle(story: ReportStep): string | null {
+    const baseTitle = story.baseTitle?.trim();
+    if (!baseTitle || !story.sectionTitle) return null;
+    if (!MERGED_SUBSECTION_BASE_TITLES.has(normalizeTitleKey(baseTitle))) return null;
+    return normalizeSectionTitle(baseTitle);
+}
+
 export type ReportDocumentSection = {
     title: string | null;
     body: string;
 };
 
-const SECTION_DELIMITER = "\n\n---\n\n";
+export const SECTION_DELIMITER = "\n\n---\n\n";
 
 export function serializeReportSections(sections: ReportDocumentSection[]): string {
     return sections
         .filter((section) => section.title || section.body.length > 0)
         .map((section) => (section.title ? `${section.title}\n${section.body}` : section.body))
         .join(SECTION_DELIMITER);
+}
+
+export function bodyToEditingText(body: string): string {
+    return parseReportSections(body)
+        .map((section) => (section.title ? `${section.title}\n${section.body}` : section.body))
+        .filter((block) => block.length > 0)
+        .join("\n\n");
+}
+
+export function editingTextToBody(text: string): string {
+    if (!text.trim()) return "";
+    return serializeReportSections(parseReportSections(text));
+}
+
+function escapeReportHtml(text: string): string {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+export function formatReportBodyHtml(body: string): string {
+    const chunks: string[] = [];
+    const pattern = /\*\*([^*]+)\*\*/g;
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = pattern.exec(body)) !== null) {
+        chunks.push(escapeReportHtml(body.slice(lastIndex, match.index)));
+        chunks.push(`<strong>${escapeReportHtml(match[1])}</strong>`);
+        lastIndex = match.index + match[0].length;
+    }
+
+    chunks.push(escapeReportHtml(body.slice(lastIndex)));
+    return chunks.join("").replace(/\n/g, "<br>");
+}
+
+export function htmlElementToPlainWithBold(element: HTMLElement): string {
+    const visit = (node: Node): string => {
+        if (node.nodeType === Node.TEXT_NODE) {
+            return node.textContent ?? "";
+        }
+
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+            return "";
+        }
+
+        const el = node as HTMLElement;
+        if (el.tagName === "BR") {
+            return "\n";
+        }
+
+        if (el.tagName === "STRONG" || el.tagName === "B") {
+            return `**${el.textContent ?? ""}**`;
+        }
+
+        if (el.tagName === "DIV" || el.tagName === "P") {
+            const inner = Array.from(el.childNodes).map(visit).join("");
+            return inner.endsWith("\n") ? inner : `${inner}\n`;
+        }
+
+        return Array.from(el.childNodes).map(visit).join("");
+    };
+
+    return Array.from(element.childNodes)
+        .map(visit)
+        .join("")
+        .replace(/\n+$/, "");
 }
 
 export function parseReportSections(text: string): ReportDocumentSection[] {
@@ -115,6 +206,17 @@ export function buildReportSections(
         );
 
         if (!processed.trim()) return;
+
+        const mergedTitle = includeTitles ? getMergedSectionTitle(story) : null;
+        if (mergedTitle) {
+            const last = sections[sections.length - 1];
+            if (last?.title === mergedTitle) {
+                last.body = last.body ? `${last.body}\n\n${processed}` : processed;
+                return;
+            }
+            sections.push({title: mergedTitle, body: processed});
+            return;
+        }
 
         const title = getStepTitle(story);
         if (includeTitles && title) {

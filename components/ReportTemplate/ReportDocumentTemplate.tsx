@@ -1,7 +1,11 @@
 import {forwardRef, useEffect, useRef} from "react";
 import {Box, Tooltip, Typography} from "@mui/material";
-import ReportDocumentBody from "./ReportDocumentBody";
+import ReportDocumentBody, {ReportDocumentBodyHandle} from "./ReportDocumentBody";
 import ReportDrawingCanvas, {DrawingTool} from "./ReportDrawingCanvas";
+import ReportExamDetailsSection, {ReportExamDetails, ReportPatientInfo, ReportSectionHeading} from "./ReportExamDetailsSection";
+import {REPORT_BODY_FONT, REPORT_BODY_FONT_SIZE, REPORT_BODY_LINE_HEIGHT} from "./reportTypography";
+
+export type {ReportPatientInfo, ReportExamDetails};
 
 export type ReportDrawingConfig = {
     active: boolean;
@@ -10,11 +14,6 @@ export type ReportDrawingConfig = {
     lineWidth: number;
     dataUrl: string;
     onChange: (dataUrl: string) => void;
-};
-
-export type ReportPatientInfo = {
-    fullName: string;
-    amka: string;
 };
 
 export type ReportImageSize = {
@@ -28,8 +27,10 @@ type ReportDocumentTemplateProps = {
     editable?: boolean;
     drawing?: ReportDrawingConfig;
     patient?: ReportPatientInfo | null;
+    examDetails?: ReportExamDetails | null;
     eegDiagramSize?: ReportImageSize | null;
     onEegDiagramSizeChange?: (size: ReportImageSize) => void;
+    bodyEditorRef?: React.Ref<ReportDocumentBodyHandle>;
 };
 
 const DEFAULT_EEG_DIAGRAM_WIDTH = 400;
@@ -46,9 +47,9 @@ const pageSx = {
     boxSizing: "border-box",
     px: "14mm",
     py: "10mm",
-    fontFamily: '"Times New Roman", Times, serif',
-    fontSize: "12pt",
-    lineHeight: 1.5,
+    fontFamily: REPORT_BODY_FONT,
+    fontSize: REPORT_BODY_FONT_SIZE,
+    lineHeight: REPORT_BODY_LINE_HEIGHT,
 } as const;
 
 const headerTextSx = {
@@ -396,7 +397,7 @@ function ReportTemplateHeader() {
                 sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "flex-start",
+                    alignItems: "stretch",
                     gap: 3,
                     mb: 2,
                 }}
@@ -429,7 +430,7 @@ function ReportTemplateHeader() {
                         component="img"
                         src="/report-template/auth-logo.jpg"
                         alt=""
-                        sx={{width: 92, height: "auto", mt: 1.5, display: "block"}}
+                        sx={{width: 92, height: "auto", mt: "auto", pt: 1.5, display: "block"}}
                     />
                 </Box>
 
@@ -451,7 +452,7 @@ function ReportTemplateHeader() {
                         component="img"
                         src="/report-template/hospital-logo.jpg"
                         alt=""
-                        sx={{width: 78, height: "auto", mt: 2.5, display: "block"}}
+                        sx={{width: 78, height: "auto", mt: "auto", pt: 1.5, display: "block"}}
                     />
                 </Box>
             </Box>
@@ -468,7 +469,7 @@ function ReportTemplateHeader() {
 
 const ReportDocumentTemplate = forwardRef<HTMLDivElement, ReportDocumentTemplateProps>(
     function ReportDocumentTemplate(
-        {body, onBodyChange, editable = false, drawing, patient, eegDiagramSize, onEegDiagramSizeChange},
+        {body, onBodyChange, editable = false, drawing, patient, examDetails, eegDiagramSize, onEegDiagramSizeChange, bodyEditorRef},
         ref
     ) {
         const canEditText = editable && !drawing?.active;
@@ -479,8 +480,15 @@ const ReportDocumentTemplate = forwardRef<HTMLDivElement, ReportDocumentTemplate
                 <Box sx={{position: "relative"}}>
                     <ReportTemplateHeader/>
 
-                    <Box sx={{width: "100%", mt: 1, pointerEvents: canEditText ? "auto" : "none"}}>
+                    {examDetails && <ReportExamDetailsSection exam={examDetails}/>}
+
+                    <Box sx={{mt: examDetails ? 0 : 2, mb: 1.5}}>
+                        <ReportSectionHeading title="Στοιχεία πορίσματος"/>
+                    </Box>
+
+                    <Box sx={{width: "100%", pointerEvents: canEditText ? "auto" : "none"}}>
                         <ReportDocumentBody
+                            ref={bodyEditorRef}
                             body={body}
                             onBodyChange={onBodyChange}
                             editable={canEditText}

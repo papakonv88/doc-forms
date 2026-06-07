@@ -1,8 +1,6 @@
-import {ReactNode, useEffect, useRef, useState} from "react";
+import {ReactNode, useCallback, useEffect, useRef, useState} from "react";
 import {Box} from "@mui/material";
 import {A4_HEIGHT_MM, A4_WIDTH_MM, getA4PageCount, mmToPx} from "../../utils/a4";
-
-const PAGE_GAP_PX = 16;
 
 type A4PagePreviewProps = {
     children: ReactNode;
@@ -11,7 +9,22 @@ type A4PagePreviewProps = {
 function A4PagePreview({children}: A4PagePreviewProps) {
     const [pageCount, setPageCount] = useState(1);
     const [contentHeightPx, setContentHeightPx] = useState(0);
+    const [pageHeightPx, setPageHeightPx] = useState(() => mmToPx(A4_HEIGHT_MM));
     const contentRef = useRef<HTMLDivElement>(null);
+    const pageMeasureRef = useRef<HTMLDivElement>(null);
+
+    const measurePageHeight = useCallback(() => {
+        const measured = pageMeasureRef.current?.getBoundingClientRect().height;
+        if (measured && measured > 0) {
+            setPageHeightPx(measured);
+        }
+    }, []);
+
+    useEffect(() => {
+        measurePageHeight();
+        window.addEventListener("resize", measurePageHeight);
+        return () => window.removeEventListener("resize", measurePageHeight);
+    }, [measurePageHeight]);
 
     useEffect(() => {
         const element = contentRef.current;
@@ -19,18 +32,19 @@ function A4PagePreview({children}: A4PagePreviewProps) {
 
         const measure = () => {
             try {
+                measurePageHeight();
                 const height = Math.max(
                     element.getBoundingClientRect().height,
                     element.scrollHeight
                 );
                 setContentHeightPx(height);
-                setPageCount(getA4PageCount(height));
             } catch {
                 // ignore measurement errors
             }
         };
 
         measure();
+
         if (typeof ResizeObserver === "undefined") return;
 
         let observer: ResizeObserver | null = null;
@@ -42,14 +56,16 @@ function A4PagePreview({children}: A4PagePreviewProps) {
         }
 
         return () => observer?.disconnect();
-    }, [children]);
+    }, [children, measurePageHeight]);
 
-    const pageHeight = `${A4_HEIGHT_MM}mm`;
+    useEffect(() => {
+        setPageCount(getA4PageCount(contentHeightPx, pageHeightPx));
+    }, [contentHeightPx, pageHeightPx]);
+
     const pageWidth = `${A4_WIDTH_MM}mm`;
-    const singlePageHeightPx = mmToPx(A4_HEIGHT_MM);
-    const pageStackHeightPx =
-        pageCount * singlePageHeightPx + Math.max(0, pageCount - 1) * PAGE_GAP_PX;
-    const containerMinHeightPx = Math.max(contentHeightPx, pageStackHeightPx);
+    const pageHeight = `${A4_HEIGHT_MM}mm`;
+    const pageStackHeightPx = pageCount * pageHeightPx;
+    const containerHeightPx = Math.max(contentHeightPx, pageStackHeightPx);
 
     return (
         <Box
@@ -61,7 +77,6 @@ function A4PagePreview({children}: A4PagePreviewProps) {
                 flexDirection: "column",
                 alignItems: "center",
                 width: "100%",
-                minHeight: containerMinHeightPx + 48,
                 boxSizing: "border-box",
             }}
         >
@@ -69,17 +84,28 @@ function A4PagePreview({children}: A4PagePreviewProps) {
                 sx={{
                     position: "relative",
                     width: pageWidth,
-                    minHeight: containerMinHeightPx,
+                    minHeight: containerHeightPx,
                 }}
             >
                 <Box
+                    ref={pageMeasureRef}
                     aria-hidden
                     sx={{
                         position: "absolute",
                         top: 0,
                         left: 0,
                         width: pageWidth,
-                        height: pageStackHeightPx,
+                        height: pageHeight,
+                        visibility: "hidden",
+                        pointerEvents: "none",
+                    }}
+                />
+
+                <Box
+                    aria-hidden
+                    sx={{
+                        position: "absolute",
+                        inset: 0,
                         zIndex: 0,
                     }}
                 >
@@ -87,13 +113,15 @@ function A4PagePreview({children}: A4PagePreviewProps) {
                         <Box
                             key={index}
                             sx={{
+                                position: "absolute",
+                                top: index * pageHeightPx,
+                                left: 0,
                                 width: pageWidth,
                                 height: pageHeight,
                                 bgcolor: "#fff",
                                 boxShadow: "0 2px 14px rgba(0,0,0,0.22)",
                                 border: "1px solid rgba(0,0,0,0.08)",
                                 boxSizing: "border-box",
-                                mb: index < pageCount - 1 ? `${PAGE_GAP_PX}px` : 0,
                             }}
                         />
                     ))}
@@ -108,10 +136,10 @@ function A4PagePreview({children}: A4PagePreviewProps) {
                                 position: "absolute",
                                 left: 0,
                                 right: 0,
-                                top: (index + 1) * singlePageHeightPx + index * PAGE_GAP_PX - 1,
+                                top: (index + 1) * pageHeightPx,
                                 zIndex: 2,
                                 borderTop: "2px dashed",
-                                borderColor: "rgba(0,0,0,0.2)",
+                                borderColor: "rgba(0,0,0,0.35)",
                                 pointerEvents: "none",
                             }}
                         />

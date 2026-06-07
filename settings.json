@@ -55,7 +55,7 @@
         "type": "date",
         "errorMsg": "Επιλέξτε ημερομηνία",
         "validator": "^.+$",
-        "required": true
+        "required": false
       },
       {
         "propertyName": "endeiksi_heg",
@@ -105,7 +105,7 @@
             "Ενδειξη σχετιζομενη με επιληψια": "^.+$"
           }
         },
-        "required": true
+        "required": false
       },
       {
         "propertyName": "typos_katagrafis",
@@ -121,7 +121,7 @@
           "ΒΙΝΤΕΟ ΗΕΓ",
           "ΜΕΛΕΤΗ ΥΠΝΟΥ"
         ],
-        "required": true
+        "required": false
       },
       {
         "propertyName": "parapombi",
@@ -157,7 +157,7 @@
           "Γναθοχειρουργική",
           "Εξωνοσοκομειακή παραμπομπή"
         ],
-        "required": true
+        "required": false
       },
       {
         "propertyName": "aitia_eksetasis",
@@ -190,7 +190,7 @@
             "κειμενο": "^.+$"
           }
         },
-        "required": true
+        "required": false
       },
       {
         "propertyName": "antispasmodiki_agogi",
@@ -230,7 +230,7 @@
           "Mysoline (Primidone)",
           "Gabitril (Tiagabine)"
         ],
-        "required": true
+        "required": false
       },
       {
         "propertyName": "alli_agogi",
@@ -253,7 +253,7 @@
           "ΑΡ",
           "ΑΜΦΟΤΕΡΟΠΛΕΥΡΑ"
         ],
-        "required": true
+        "required": false
       },
       {
         "propertyName": "kraniotomi_entopisi",
@@ -269,7 +269,7 @@
           "ΚΕΝΤΡΙΚΑ",
           "ΙΝΙΑΚΑ"
         ],
-        "required": true
+        "required": false
       },
       {
         "propertyName": "topothetisi_ilektrodion",
@@ -307,7 +307,7 @@
           "T10",
           "P10"
         ],
-        "required": true
+        "required": false
       },
       {
         "propertyName": "diarkeia_katagrafis",
@@ -342,7 +342,7 @@
             "μερες": "^[1-9][0-9]*$"
           }
         },
-        "required": true
+        "required": false
       },
       {
         "propertyName": "epipedo_syneidisis",
@@ -359,7 +359,7 @@
           "ΔΙΕΓΕΡΣΗ",
           "ΚΩΜΑ"
         ],
-        "required": true
+        "required": false
       },
       {
         "propertyName": "synergasia",
@@ -374,7 +374,7 @@
           "Κακή",
           "Καμία"
         ],
-        "required": true
+        "required": false
       },
       {
         "propertyName": "yperpnoia_xronos",
@@ -389,7 +389,7 @@
           "5 λεπτά",
           "Δεν πραγματοποιήθηκε"
         ],
-        "required": true
+        "required": false
       },
       {
         "propertyName": "yperpnoia_prospatheia",
@@ -405,7 +405,7 @@
           "Κακή",
           "Δεν πραγματοποιήθηκε"
         ],
-        "required": true,
+        "required": false,
         "dependsOn": {
           "propertyName": "yperpnoia_xronos",
           "value": "Δεν πραγματοποιήθηκε"
@@ -424,7 +424,7 @@
           "1Hz – 60Hz",
           "Δεν πραγματοποιήθηκε"
         ],
-        "required": true
+        "required": false
       }
     ]
   },
@@ -2012,6 +2012,17 @@
         "hasNested": false,
         "multipleSelect": false,
         "hasFreeText": false
+      },
+      {
+        "id": 10,
+        "title": "Συμπέρασμα - Κλινική Συσχέτιση",
+        "texts": [],
+        "sections": [],
+        "placeholders": [],
+        "hasNested": false,
+        "multipleSelect": false,
+        "hasFreeText": true,
+        "freeTextOnly": true
       }
     ]
   }

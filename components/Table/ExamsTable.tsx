@@ -11,23 +11,34 @@ import {
     TablePagination,
     TextField,
     IconButton,
-    Menu,
-    MenuItem,
-    Chip
+    Chip,
+    Tooltip,
+    Box,
 } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
 import {useRouter} from "next/router";
 import {validateAndFormatDate, validateText} from "../../utils";
 
+function getRecordingDateValue(row: any): number {
+    const value = row?.imerominia_katagrafis;
+    if (!value) return 0;
+    const time = new Date(value).getTime();
+    return Number.isNaN(time) ? 0 : time;
+}
+
+function sortByRecordingDateDesc(rows: any[]): any[] {
+    return [...rows].sort(
+        (a, b) => getRecordingDateValue(b) - getRecordingDateValue(a)
+    );
+}
 
 function ExamsTable({exams}: any) {
     const [search, setSearch] = useState(""); // Search state
-    const [filteredData, setFilteredData] = useState(exams); // Filtered data state
+    const [filteredData, setFilteredData] = useState(() => sortByRecordingDateDesc(exams)); // Filtered data state
     const [page, setPage] = useState(0); // Current page
     const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
-    const [anchorEl, setAnchorEl] = useState(null); // Anchor for menu
-    const [selectedRowId, setSelectedRowId] = useState(null); // Track selected row
     const router = useRouter();
 
     const goToExam = (id) => {
@@ -55,7 +66,7 @@ function ExamsTable({exams}: any) {
                 .includes(value)
         );
 
-        setFilteredData(filtered);
+        setFilteredData(sortByRecordingDateDesc(filtered));
         setPage(0); // Reset to first page on search
     };
 
@@ -68,18 +79,6 @@ function ExamsTable({exams}: any) {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0); // Reset to first page on rows per page change
-    };
-
-    // Open menu for a specific row
-    const handleMenuOpen = (event, rowId) => {
-        setAnchorEl(event.currentTarget);
-        setSelectedRowId(rowId);
-    };
-
-    // Close menu
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-        setSelectedRowId(null);
     };
 
     const paginatedData = filteredData.slice(
@@ -246,44 +245,28 @@ function ExamsTable({exams}: any) {
                                     {validateText(row.patient?.amka)}
                                 </TableCell>
                                 <TableCell sx={{ py: 2 }}>
-                                    <IconButton
-                                        aria-controls="action-menu"
-                                        aria-haspopup="true"
-                                        onClick={(e) => handleMenuOpen(e, row._id)}
-                                        sx={{
-                                            '&:hover': {
-                                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                                            }
-                                        }}
-                                    >
-                                        <MoreVertIcon/>
-                                    </IconButton>
-                                    <Menu
-                                        id="action-menu"
-                                        anchorEl={anchorEl}
-                                        open={Boolean(anchorEl) && selectedRowId === row._id}
-                                        onClose={handleMenuClose}
-                                        PaperProps={{
-                                            sx: {
-                                                borderRadius: 2,
-                                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-                                            }
-                                        }}
-                                    >
-                                        <MenuItem
-                                            onClick={() => goToExam(row.examId)}
-                                            sx={{ fontWeight: 500 }}
-                                        >
-                                            Εξέταση
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() => goToReport(row.examId)}
-                                            sx={{ fontWeight: 500 }}
-                                        >
-                                            Πόρισμα
-                                        </MenuItem>
-                                    </Menu>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                        <Tooltip title="Εξέταση" arrow>
+                                            <IconButton
+                                                aria-label="Εξέταση"
+                                                onClick={() => goToExam(row.examId)}
+                                                size="small"
+                                                color="inherit"
+                                            >
+                                                <VisibilityOutlinedIcon fontSize="small"/>
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Πόρισμα" arrow>
+                                            <IconButton
+                                                aria-label="Πόρισμα"
+                                                onClick={() => goToReport(row.examId)}
+                                                size="small"
+                                                color="inherit"
+                                            >
+                                                <SummarizeOutlinedIcon fontSize="small"/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
                                 </TableCell>
                             </TableRow>
                         ))}
