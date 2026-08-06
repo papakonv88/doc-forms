@@ -1,8 +1,17 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import Exam from "../../models/exam"
 import Patient from "../../models/patient";
+import {requireApiAuth} from "../../lib/requireApiAuth";
+import dbConnect from "../../lib/db";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await requireApiAuth(req, res);
+    if (!session) {
+        return;
+    }
+
+    await dbConnect();
+
     switch (req.method) {
         case 'GET':
              // @ts-ignore

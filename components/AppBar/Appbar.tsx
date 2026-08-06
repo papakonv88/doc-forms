@@ -1,20 +1,25 @@
 import {AppBar, Toolbar, Typography, Box, Button} from "@mui/material";
 import {useRouter} from "next/router";
-import {Vaccines, Assessment, AddCircle} from '@mui/icons-material';
+import {signOut, useSession} from "next-auth/react";
+import {Vaccines, Assessment, AddCircle, Logout} from '@mui/icons-material';
 
 function Appbar() {
     const router = useRouter();
+    const {data: session} = useSession();
+
     const handleNavigation = (path) => {
         router.push(path);
     };
+
     return (
         <>
             <AppBar
                 position="fixed"
                 sx={{
-                    background: 'rgba(18, 18, 18, 0.35)',
+                    background: 'rgba(255, 255, 255, 0.85)',
                     backdropFilter: 'blur(20px)',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.08)',
+                    color: 'text.primary',
                 }}
             >
                 <Toolbar sx={{ py: 1 }}>
@@ -41,7 +46,7 @@ function Appbar() {
                             variant="h6"
                             sx={{
                                 fontWeight: 700,
-                                color: '#ffffff',
+                                color: 'text.primary',
                             }}
                         >
                             ΗΕΓ Πρόγραμμα Πορίσματος
@@ -61,9 +66,9 @@ function Appbar() {
                                 px: 2,
                                 py: 1,
                                 borderRadius: 2,
-                                color: '#ffffff',
+                                color: 'text.primary',
                                 '&:hover': {
-                                    background: 'rgba(25, 118, 210, 0.1)',
+                                    background: 'rgba(25, 118, 210, 0.08)',
                                 }
                             }}
                         >
@@ -80,14 +85,40 @@ function Appbar() {
                                 py: 1,
                                 borderRadius: 2,
                                 backgroundColor: '#1976d2',
-                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                                boxShadow: 'none',
                                 '&:hover': {
                                     backgroundColor: '#1565c0',
-                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                                    boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
                                 }
                             }}
                         >
                             Νέα Εξέταση
+                        </Button>
+                        {session?.user?.name && (
+                            <Typography
+                                variant="body2"
+                                sx={{color: 'text.secondary', px: 1}}
+                            >
+                                {session.user.name}
+                            </Typography>
+                        )}
+                        <Button
+                            color="inherit"
+                            onClick={() => signOut({callbackUrl: "/login"})}
+                            startIcon={<Logout />}
+                            sx={{
+                                textTransform: "none",
+                                fontWeight: 500,
+                                px: 2,
+                                py: 1,
+                                borderRadius: 2,
+                                color: 'text.primary',
+                                '&:hover': {
+                                    background: 'rgba(0, 0, 0, 0.04)',
+                                }
+                            }}
+                        >
+                            Έξοδος
                         </Button>
                     </Box>
                 </Toolbar>

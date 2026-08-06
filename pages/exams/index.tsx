@@ -34,7 +34,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const baseUrl = `${protocol}://${host}`;
 
     try {
-        const { data: exams } = await axios.get(`${baseUrl}/api/getAllExams`);
+        const { data: exams } = await axios.get(`${baseUrl}/api/getAllExams`, {
+            headers: {
+                cookie: req.headers.cookie || '',
+            },
+        });
 
         return {
             props: { exams },

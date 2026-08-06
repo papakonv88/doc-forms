@@ -111,18 +111,18 @@ function ExamsTable({exams}: any) {
                 component={Paper}
                 sx={{
                     borderRadius: 3,
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    border: '1px solid rgba(0, 0, 0, 0.08)',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.08)',
                 }}
             >
                 <Table>
                     <TableHead>
-                        <TableRow sx={{ backgroundColor: '#2a2a2a' }}>
+                        <TableRow sx={{ backgroundColor: '#e3f2fd' }}>
                             <TableCell
                                 className={'table-row'}
                                 sx={{
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'text.primary',
                                     borderBottom: '2px solid #1976d2',
                                     py: 2
                                 }}
@@ -133,7 +133,7 @@ function ExamsTable({exams}: any) {
                                 className={'table-row'}
                                 sx={{
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'text.primary',
                                     borderBottom: '2px solid #1976d2',
                                     py: 2
                                 }}
@@ -144,7 +144,7 @@ function ExamsTable({exams}: any) {
                                 className={'table-row'}
                                 sx={{
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'text.primary',
                                     borderBottom: '2px solid #1976d2',
                                     py: 2
                                 }}
@@ -155,7 +155,7 @@ function ExamsTable({exams}: any) {
                                 className={'table-row'}
                                 sx={{
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'text.primary',
                                     borderBottom: '2px solid #1976d2',
                                     py: 2
                                 }}
@@ -166,7 +166,7 @@ function ExamsTable({exams}: any) {
                                 className={'table-row'}
                                 sx={{
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'text.primary',
                                     borderBottom: '2px solid #1976d2',
                                     py: 2
                                 }}
@@ -177,7 +177,7 @@ function ExamsTable({exams}: any) {
                                 className={'table-row'}
                                 sx={{
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'text.primary',
                                     borderBottom: '2px solid #1976d2',
                                     py: 2
                                 }}
@@ -188,7 +188,7 @@ function ExamsTable({exams}: any) {
                                 className={'table-row'}
                                 sx={{
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'text.primary',
                                     borderBottom: '2px solid #1976d2',
                                     py: 2
                                 }}
@@ -199,7 +199,7 @@ function ExamsTable({exams}: any) {
                                 className={'table-row'}
                                 sx={{
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'text.primary',
                                     borderBottom: '2px solid #1976d2',
                                     py: 2
                                 }}

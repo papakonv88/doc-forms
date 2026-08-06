@@ -1,7 +1,16 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import NewExam from "./../../models/exam";
+import {requireApiAuth} from "../../lib/requireApiAuth";
+import dbConnect from "../../lib/db";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await requireApiAuth(req, res);
+    if (!session) {
+        return;
+    }
+
+    await dbConnect();
+
     switch (req.method) {
         case "POST":
             try {
