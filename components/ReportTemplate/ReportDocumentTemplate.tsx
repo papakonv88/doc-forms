@@ -137,7 +137,7 @@ type ReportTemplateFooterProps = {
 
 function ReportTemplateFooter({patient}: ReportTemplateFooterProps) {
     const patientName = patient?.fullName?.trim() || "Ονοματεπώνυμο ασθενούς";
-    const amka = patient?.amka?.trim() || "ΑΜΚΑ / Study ID";
+    const amka = patient?.amka?.trim() || "ΑΜΚΑ";
 
     return (
         <Box sx={{mt: 4, width: "100%"}}>
